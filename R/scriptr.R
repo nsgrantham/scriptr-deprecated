@@ -78,9 +78,9 @@ script <- function(cmd, fun) {
     # Substitute later with formatted help page
     help_page <- NULL
     for (param in params) {
-      help_page <- paste(help_page, param$help, sep = "\n")
+      help_page <- paste(help_page, paste0(param$long_opt, ": ", param$help), sep = "\n")
     }
-    return(help_page)
+    return(function() cat(help_page))
   }
 
   # Otherwise, parse values from command line input and execute script
