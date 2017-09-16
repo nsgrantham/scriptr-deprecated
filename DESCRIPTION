@@ -1,9 +1,11 @@
 Package: scriptr
-Title: What the Package Does (one line, title case)
-Version: 0.0.0.9000
-Authors@R: Neal Grantham <neal@nsgrantham.com> [aut, cre]
-Description: What the package does (one paragraph).
+Title: Compose Command Line Programs with Ease
+Author: Neal Grantham <neal@nsgrantham.com>
+Version: 0.0.1
+Description: Tools to construct scripts which accept command line arguments
 Depends: R (>= 3.3.3)
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
+Imports: roxygen2
+RoxygenNote: 6.0.1
