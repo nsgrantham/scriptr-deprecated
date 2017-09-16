@@ -8,15 +8,17 @@ command <- function(description, parse = commandArgs(trailingOnly = TRUE)) {
     # if no args, opts given, then simply display help
     parse <- "--help"
   }
-  cmd <- list(
-    description = description,
-    parse = parse,
-    params = list()
-  )
+  cmd <- structure(list(
+      description = description,
+      parse = parse,
+      params = list()
+    ),
+    class = 'command')
   cmd
 }
 
 #' Option
+#'
 #' @param cmd Command with description, args to parse, and list of params
 #' @param ... Long and short options
 #' @param default Default option value is none is given
@@ -60,14 +62,16 @@ option <- function(cmd, ..., default = NULL, type = NULL, choice = NULL, is.flag
     }
   }
 
-  cmd$params[[name]] <- list(
-    class = "option",
-    long_opt = long_opt,
-    short_opt = short_opt,
-    choice = choice,
-    type = type,
-    default = default,
-    help = help
+  cmd$params[[name]] <- structure(
+    list(
+      long_opt = long_opt,
+      short_opt = short_opt,
+      choice = choice,
+      type = type,
+      default = default,
+      help = help
+    ),
+    class = "option"
   )
   cmd
 }
@@ -82,6 +86,8 @@ is.valid_name <- function(x) make.names(x) == x
 #' @importFrom stringr str_detect str_split
 #' @export
 script <- function(cmd, fun) {
+  stopifnot(class(fun) == 'function')
+
   parse <- cmd$parse
   params <- cmd$params
 
@@ -101,7 +107,7 @@ script <- function(cmd, fun) {
   values <- list()
   for (param_name in names(params)) {
     param <- params[[param_name]]
-    if (param$class == "option") {
+    if (class(param) == "option") {
       values[[param_name]] <- param$default
       for (parslet in parse) {
         if (startsWith(parslet, param$long_opt) || startsWith(parslet, param$short_opt)) {
