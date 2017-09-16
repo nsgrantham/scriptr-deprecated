@@ -6,6 +6,11 @@
 \usage{
 script(cmd, fun)
 }
+\arguments{
+\item{cmd}{Command with description, args to parse, and list of params}
+
+\item{fun}{Function to execute with arguments supplied from the command line}
+}
 \description{
 Script
 }

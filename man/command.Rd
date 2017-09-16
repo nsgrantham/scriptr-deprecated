@@ -6,6 +6,11 @@
 \usage{
 command(description, parse = commandArgs(trailingOnly = TRUE))
 }
+\arguments{
+\item{description}{What does the script do?}
+
+\item{parse}{String of command line arguments}
+}
 \description{
 Commands
 }

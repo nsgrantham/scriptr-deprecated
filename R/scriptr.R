@@ -1,4 +1,6 @@
 #' Commands
+#' @param description What does the script do?
+#' @param parse String of command line arguments
 #' @importFrom stringr str_split
 #' @export
 command <- function(description, parse = commandArgs(trailingOnly = TRUE)) {
@@ -15,7 +17,15 @@ command <- function(description, parse = commandArgs(trailingOnly = TRUE)) {
 }
 
 #' Option
+#' @param cmd Command with description, args to parse, and list of params
+#' @param ... Long and short options
+#' @param default Default option value is none is given
+#' @param type Data type (character, logical, integer, numeric, complex)
+#' @param choice Vector of possible values
+#' @param is.flag Is this a simple logical flag?
+#' @param help String describing what this option does for the help page
 #' @importFrom stringr str_sub str_length str_replace_all
+#' @importFrom utils tail
 #' @export
 option <- function(cmd, ..., default = NULL, type = NULL, choice = NULL, is.flag = FALSE, help = "") {
   opts <- list(...)
@@ -67,6 +77,8 @@ is.short_opt <- function(x) !is.long_opt(x) && startsWith(x, "-")
 is.valid_name <- function(x) make.names(x) == x
 
 #' Script
+#' @param cmd Command with description, args to parse, and list of params
+#' @param fun Function to execute with arguments supplied from the command line
 #' @importFrom stringr str_detect str_split
 #' @export
 script <- function(cmd, fun) {
@@ -112,6 +124,8 @@ script <- function(cmd, fun) {
   function() do.call(fun, values)
 }
 
+#' Simple function to remove option prefix
+#' @param x String beginning with '-' or '--'
 #' @importFrom stringr str_sub str_length
 remove_prefix <- function(x) {
   if (is.long_opt(x))  return(str_sub(x, 3, str_length(x)))

@@ -7,6 +7,21 @@
 option(cmd, ..., default = NULL, type = NULL, choice = NULL,
   is.flag = FALSE, help = "")
 }
+\arguments{
+\item{cmd}{Command with description, args to parse, and list of params}
+
+\item{...}{Long and short options}
+
+\item{default}{Default option value is none is given}
+
+\item{type}{Data type (character, logical, integer, numeric, complex)}
+
+\item{choice}{Vector of possible values}
+
+\item{is.flag}{Is this a simple logical flag?}
+
+\item{help}{String describing what this option does for the help page}
+}
 \description{
 Option
 }
