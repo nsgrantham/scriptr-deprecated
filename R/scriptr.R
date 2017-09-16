@@ -4,10 +4,6 @@
 #' @importFrom stringr str_split
 #' @export
 command <- function(description, parse = commandArgs(trailingOnly = TRUE)) {
-  if (identical(parse, character())) {
-    # if no args, opts given, then simply display help
-    parse <- "--help"
-  }
   cmd <- list(
     description = description,
     parse = parse,
@@ -16,16 +12,28 @@ command <- function(description, parse = commandArgs(trailingOnly = TRUE)) {
   cmd
 }
 
+#' Argument
+#' @param cmd Command with description, args to parse, and list of params
+#' @param name Name of argument(s)
+#' @param nargs Number of arguments (-1 for unlimited)
+#' @param help Description of argument for help page
+argument <- function(cmd, name, nargs = 1, help = "") {
+  cmd[[name]] <- structure(list(
+    nargs = nargs,
+    help = help
+  ), class = "argument")
+  cmd
+}
+
 #' Option
 #' @param cmd Command with description, args to parse, and list of params
 #' @param ... Long and short options
-#' @param default Default option value is none is given
+#' @param default Default option value if none is given
 #' @param type Data type (character, logical, integer, numeric, complex)
 #' @param choice Vector of possible values
 #' @param is.flag Is this a simple logical flag?
-#' @param help String describing what this option does for the help page
+#' @param help Description of option for help page
 #' @importFrom stringr str_sub str_length str_replace_all
-#' @importFrom utils tail
 #' @export
 option <- function(cmd, ..., default = NULL, type = NULL, choice = NULL, is.flag = FALSE, help = "") {
   opts <- list(...)
@@ -80,13 +88,14 @@ is.valid_name <- function(x) make.names(x) == x
 #' @param cmd Command with description, args to parse, and list of params
 #' @param fun Function to execute with arguments supplied from the command line
 #' @importFrom stringr str_detect str_split
+#' @importFrom utils tail
 #' @export
 script <- function(cmd, fun) {
   parse <- cmd$parse
   params <- cmd$params
 
   # Print help page and exit
-  if ("--help" %in% parse) {
+  if ("--help" %in% parse || length(parse) == 0) {
     # Substitute later with formatted help page
     help_page <- NULL
     for (param in params) {
