@@ -60,12 +60,12 @@ List callgetopt(CharacterVector args, ListOf<List> opts) {
     string shortSuffix = "";
     if (opttype == "required") {
       optargs[i].has_arg = required_argument;
-      shortSuffix = "::";
+      shortSuffix = ":";
     } else if (opttype == "flag") {
       optargs[i].has_arg = no_argument;
     } else {
       optargs[i].has_arg = optional_argument;
-      shortSuffix = ":";
+      shortSuffix = "::";
     }
     optargs[i].flag = NULL;
     optargs[i].val = i;
@@ -122,6 +122,13 @@ List callgetopt(CharacterVector args, ListOf<List> opts) {
   if (error) {
     ret.attr("error") = true;
   }
+
+  // positional arguments as an attribute
+  CharacterVector pos_args(argc - optind);
+  for (int i=0; i<(argc - optind); i++) {
+    pos_args[i] = argv[optind + i];
+  }
+  ret.attr("positional") = pos_args;
 
   return ret;
 }

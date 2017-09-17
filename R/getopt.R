@@ -27,8 +27,8 @@ one_getopt_param <- function(param) {
   if (!is.null(param$short_opt)) {
     sopt <- remove_prefix(param$short_opt)
   }
-  opttype <- 'optional' # 'required'
-  if (!is.null(param$is_flag) && param$is_flag) {
+  opttype <- 'required' # 'optional' #
+  if (param$type == 'logical') {
     opttype <- 'flag'
   }
   list(name=lopt, opttype=opttype, short=sopt)
