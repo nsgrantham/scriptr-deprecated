@@ -12,7 +12,7 @@ option(cmd, ..., default = NULL, type = NULL, choice = NULL,
 
 \item{...}{Long and short options}
 
-\item{default}{Default option value is none is given}
+\item{default}{Default option value if none is given}
 
 \item{type}{Data type (character, logical, integer, numeric, complex)}
 
@@ -20,7 +20,7 @@ option(cmd, ..., default = NULL, type = NULL, choice = NULL,
 
 \item{is.flag}{Is this a simple logical flag?}
 
-\item{help}{String describing what this option does for the help page}
+\item{help}{Description of option for help page}
 }
 \description{
 Option
