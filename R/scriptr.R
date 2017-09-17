@@ -20,6 +20,7 @@ command <- function(description) {
 #' @param nargs Number of arguments (-1 for unlimited)
 #' @param help Description of argument for help page
 argument <- function(cmd, name, default = NULL, nargs = 1, help = "") {
+  stopifnot(class(cmd) == "command")
   cmd[[name]] <- structure(
     list(
       default = default,
@@ -43,6 +44,7 @@ argument <- function(cmd, name, default = NULL, nargs = 1, help = "") {
 #' @importFrom stringr str_sub str_length str_replace_all
 #' @export
 option <- function(cmd, ..., default = NULL, type = NULL, choice = NULL, is.flag = FALSE, help = "") {
+  stopifnot(class(cmd) == 'command')
   opts <- list(...)
   long_opt <- NULL
   short_opt <- NULL
