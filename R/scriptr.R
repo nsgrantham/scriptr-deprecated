@@ -1,15 +1,16 @@
 #' Commands
 #' @param description What does the script do?
-#' @param parse String of command line arguments
 #' @importFrom stringr str_split
 #' @export
-command <- function(description, parse = commandArgs(trailingOnly = TRUE)) {
-  cmd <- structure(list(
+command <- function(description) {
+  cmd <- structure(
+    list(
       description = description,
-      parse = parse,
-      params = list()
+      params = list(),
+      script = NULL
     ),
-    class = 'command')
+    class = 'command'
+  )
   cmd
 }
 
@@ -18,11 +19,15 @@ command <- function(description, parse = commandArgs(trailingOnly = TRUE)) {
 #' @param name Name of argument(s)
 #' @param nargs Number of arguments (-1 for unlimited)
 #' @param help Description of argument for help page
-argument <- function(cmd, name, nargs = 1, help = "") {
-  cmd[[name]] <- structure(list(
-    nargs = nargs,
-    help = help
-  ), class = "argument")
+argument <- function(cmd, name, default = NULL, nargs = 1, help = "") {
+  cmd[[name]] <- structure(
+    list(
+      default = default,
+      nargs = nargs,
+      help = help
+    ),
+    class = "argument"
+  )
   cmd
 }
 
@@ -96,12 +101,24 @@ is.valid_name <- function(x) make.names(x) == x
 #' @export
 script <- function(cmd, fun) {
   stopifnot(class(fun) == 'function')
+  cmd$script <- fun
+  function(args = commandArgs(trailingOnly = TRUE)) {
 
-  parse <- cmd$parse
-  params <- cmd$params
+  }
+}
+
+get_defaults <- function(cmd) {
+  lapply(cmd$params, function(param) param$default)
+}
+
+parse_args <- function(cmd, args) {
+  # call getopt here
+  # should return list with args and opts
+
+  # Do some basic parsing here to see if "--help" is called
 
   # Print help page and exit
-  if ("--help" %in% parse || length(parse) == 0) {
+  if (str_detect(parse, "--help") || parse == "") {
     # Substitute later with formatted help page
     help_page <- NULL
     for (param in params) {
@@ -110,33 +127,45 @@ script <- function(cmd, fun) {
     return(function() cat(help_page))
   }
 
-  # Otherwise, parse values from command line input and execute script
-  parse <- unlist(str_split(parse, " "))
-  parse <- parse[parse != ""]
-  values <- list()
-  for (param_name in names(params)) {
-    param <- params[[param_name]]
-    if (class(param) == "option") {
-      values[[param_name]] <- param$default
-      for (parslet in parse) {
-        if (startsWith(parslet, param$long_opt) || startsWith(parslet, param$short_opt)) {
-          if (param$type == "logical") {
-            values[[param_name]] <- !param$default
-          }
-          if (str_detect(parslet, "=")) {
-            split_parslet <- unlist(str_split(parslet, "="))
-            param_value <- as.type(tail(split_parslet, 1), param$type)
-            if (!is.null(param$choice)) {
-              stopifnot(param_value %in% param$choice)
-            }
-            values[[param_name]] <- param_value
-          }
-        }
-      }
+  # parse <- unlist(str_split(parse, " "))
+  # parse <- parse[parse != ""]
+  defaults <- get_defaults(cmd)
+  values <- parse_input(cmd)
+  values <- merge_lists(defaults, values)
+
+  # for (param_name in names(params)) {
+  #   param <- params[[param_name]]
+  #   if (class(param) == "option") {
+  #     for (parslet in parse) {
+  #       if (startsWith(parslet, param$long_opt) || startsWith(parslet, param$short_opt)) {
+  #         if (param$type == "logical") {
+  #           values[[param_name]] <- !param$default
+  #         }
+  #         if (str_detect(parslet, "=")) {
+  #           split_parslet <- unlist(str_split(parslet, "="))
+  #           param_value <- as.type(tail(split_parslet, 1), param$type)
+  #           if (!is.null(param$choice)) {
+  #             stopifnot(param_value %in% param$choice)
+  #           }
+  #           values[[param_name]] <- param_value
+  #         }
+  #       }
+  #     }
+  #   }
+  # }
+  #
+  function() do.call(fun, values)
+}
+
+merge_lists <- function(...) {
+  lists <- list(...)
+  master_list <- lists[[1]]
+  for (lst in lists[-1]) {
+    for (name in names(lst)) {
+      master_list[[name]] <- lst[[name]]
     }
   }
-
-  function() do.call(fun, values)
+  master_list
 }
 
 #' Simple function to remove option prefix
