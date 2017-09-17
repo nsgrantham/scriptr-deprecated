@@ -9,6 +9,6 @@ stuff <- command("Print a warm greeting.") %>%
   option("--lang", "-l", default = "en", choice = c("en", "es", "se", "jp"),
          help = "Language to greet in.") %>%
   option("--yell", "-y", is.flag = TRUE, help = "Greet with enthusiasm!") %>%
-  getopt()
+  parse_args()
 
 print(stuff)
