@@ -11,4 +11,6 @@ stuff <- command("Print a warm greeting.") %>%
   option("--yell", "-y", is.flag = TRUE, help = "Greet with enthusiasm!") %>%
   parse_args()
 
-print(stuff)
+# note this data structure is temporary
+cat(sprintf('Options: %s\n', paste0(names(stuff), '=', stuff, collapse=', ')))
+cat(sprintf('Arguments: %s\n', paste(attr(stuff, 'positional'), collapse=', ')))
