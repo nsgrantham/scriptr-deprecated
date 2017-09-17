@@ -15,6 +15,9 @@ parse_args <- function(cmd, argv = commandArgs(TRUE)) {
   opts
 }
 
+#' Translate a single parameter element to the format required for parse_args
+#'
+#' @param param a list containing parameter details
 #' @export
 one_getopt_param <- function(param) {
   lopt <- sopt <- ''
