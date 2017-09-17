@@ -63,9 +63,9 @@ List callgetopt(CharacterVector args, ListOf<List> opts) {
       shortSuffix = "::";
     } else if (opttype == "flag") {
       optargs[i].has_arg = no_argument;
-      shortSuffix = ":";
     } else {
       optargs[i].has_arg = optional_argument;
+      shortSuffix = ":";
     }
     optargs[i].flag = NULL;
     optargs[i].val = i;
