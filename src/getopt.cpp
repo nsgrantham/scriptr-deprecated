@@ -27,6 +27,10 @@ List callgetopt(CharacterVector args, ListOf<List> opts) {
   // c-style argc and argv
   int argc = args.size();
   std::unique_ptr<char*[]> argv(new char*[argc]);
+  for (int i=0; i<argc; i++) {
+    const char *argstr = CHAR(STRING_ELT(args, i));
+    argv[i] = (char *)argstr;
+  }
 
   // convert opts to required structures
   std::unique_ptr<longopt[]> optargs(new longopt[optc+1]);
@@ -34,14 +38,6 @@ List callgetopt(CharacterVector args, ListOf<List> opts) {
   // mapping from equivalent short->long options (single character string
   // to 0-based index of long option struct in optargs array)
   map<string, int> shortLongEquiv;
-
-  // somewhere to keep c++ strings (which contain internal C strings)
-  // so they stay in memory until the function returns
-  vector<string> stringvec(argc);
-  for (int i=0; i<argc; i++) {
-    const char *argstr = CHAR(STRING_ELT(args, i));
-    argv[i] = (char *)argstr;
-  }
 
   // container for C name strings, which we'll clean up below
   // TODO: replace with unique_ptr so it cleans up automatically
