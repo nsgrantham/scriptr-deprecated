@@ -17,6 +17,20 @@ command <- function(description, parse = commandArgs(trailingOnly = TRUE)) {
   cmd
 }
 
+#' Argument
+#' @param cmd Command with description, args to parse, and list of params
+#' @param name Name of argument(s)
+#' @param nargs Number of arguments (-1 for unlimited)
+#' @param help Description of argument for help page
+argument <- function(cmd, name, nargs = 1, help = "") {
+  stopifnot(class(cmd) == 'command')
+  cmd[[name]] <- structure(list(
+    nargs = nargs,
+    help = help
+  ), class = "argument")
+  cmd
+}
+
 #' Option
 #'
 #' @param cmd Command with description, args to parse, and list of params
@@ -30,6 +44,7 @@ command <- function(description, parse = commandArgs(trailingOnly = TRUE)) {
 #' @importFrom utils tail
 #' @export
 option <- function(cmd, ..., default = NULL, type = NULL, choice = NULL, is.flag = FALSE, help = "") {
+  stopifnot(class(cmd) == 'command')
   opts <- list(...)
   long_opt <- NULL
   short_opt <- NULL
