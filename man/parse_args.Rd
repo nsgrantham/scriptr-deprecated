@@ -7,9 +7,9 @@
 parse_args(params, args)
 }
 \arguments{
-\item{cmd}{command definition, of the form list(a='long-a',b='long-b')}
+\item{params}{List of script parameters}
 
-\item{argv}{arguments to parse (excluding command name)}
+\item{args}{Command line arguments}
 }
 \description{
 Parse command-line arguments using standard libc functions

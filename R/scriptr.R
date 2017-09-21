@@ -88,9 +88,6 @@ option <- function(cmd, ..., default = NULL, type = NULL, choice = NULL, is.flag
   cmd
 }
 
-is.long_opt <- function(x) startsWith(x, "--")
-is.short_opt <- function(x) !is.long_opt(x) && startsWith(x, "-")
-is.valid_name <- function(x) make.names(x) == x
 
 #' Script
 #' @param cmd Command with description and list of params
@@ -106,8 +103,7 @@ script <- function(cmd, fun) {
     if (!length(args)) {
       args <- commandArgs(trailingOnly = TRUE)
     }
-    print(args)
-    if ("--help" %in% args || args == "") {
+    if ("--help" %in% args || identical(args, character(0))) {
       cat(build_help_page(description, params))
       return(invisible())
     }
@@ -118,6 +114,7 @@ script <- function(cmd, fun) {
 }
 
 #' Help page
+#'
 #' @param description What does the script do?
 #' @param params List of script parameters (options and arguments)
 build_help_page <- function(description, params) {
@@ -127,50 +124,4 @@ build_help_page <- function(description, params) {
     help_page <- paste0(help_page, param$long_opt, ": ", param$help, "\n")
   }
   help_page
-}
-
-get_defaults <- function(params) {
-  lapply(params, function(param) param$default)
-}
-
-parse_args <- function(params, args) {
-  # call getopt here
-  # should return list with args and opts
-
-  # parse <- unlist(str_split(parse, " "))
-  # parse <- parse[parse != ""]
-  defaults <- get_defaults(params)
-  # values <- callgetopt(...)
-  values <- merge_lists(defaults, values)
-  function() do.call(fun, values)
-}
-
-merge_lists <- function(...) {
-  lists <- list(...)
-  merged_list <- list()
-  for (list_ in lists) {
-    for (name in names(list_)) {
-      merged_list[[name]] <- list_[[name]]
-    }
-  }
-  merged_list
-}
-
-#' Simple function to remove option prefix
-#' @param x String beginning with '-' or '--'
-#' @importFrom stringr str_sub str_length
-remove_prefix <- function(x) {
-  if (is.long_opt(x))  return(str_sub(x, 3, str_length(x)))
-  if (is.short_opt(x)) return(str_sub(x, 2, str_length(x)))
-  x
-}
-
-as.type <- function(x, type) {
-  switch(type,
-         character = as.character(x),
-         logical = as.logical(x),
-         integer = as.integer(x),
-         numeric = as.numeric(x),
-         complex = as.complex(x),
-         x)
 }
