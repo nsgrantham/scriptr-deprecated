@@ -1,29 +1,26 @@
 #' Commands
 #' @param description What does the script do?
-#' @importFrom stringr str_split
 #' @export
 command <- function(description) {
   cmd <- structure(
     list(
       description = description,
-      params = list(),
-      script = NULL
+      params = list()
     ),
-    class = 'command'
+    class = "command"
   )
   cmd
 }
 
 #' Argument
-#' @param cmd Command with description, args to parse, and list of params
+#' @param cmd Command with description and list of params
 #' @param name Name of argument(s)
 #' @param nargs Number of arguments (-1 for unlimited)
 #' @param help Description of argument for help page
-argument <- function(cmd, name, default = NULL, nargs = 1, help = "") {
+argument <- function(cmd, name, nargs = 1, help = "") {
   stopifnot(class(cmd) == "command")
   cmd[[name]] <- structure(
     list(
-      default = default,
       nargs = nargs,
       help = help
     ),
@@ -34,17 +31,17 @@ argument <- function(cmd, name, default = NULL, nargs = 1, help = "") {
 
 #' Option
 #'
-#' @param cmd Command with description, args to parse, and list of params
+#' @param cmd Command with description and list of params
 #' @param ... Long and short options
 #' @param default Default option value if none is given
 #' @param type Data type (character, logical, integer, numeric, complex)
 #' @param choice Vector of possible values
 #' @param is.flag Is this a simple logical flag?
 #' @param help Description of option for help page
-#' @importFrom stringr str_sub str_length str_replace_all
+#' @importFrom stringr str_replace_all
 #' @export
 option <- function(cmd, ..., default = NULL, type = NULL, choice = NULL, is.flag = FALSE, help = "") {
-  stopifnot(class(cmd) == 'command')
+  stopifnot(class(cmd) == "command")
   opts <- list(...)
   long_opt <- NULL
   short_opt <- NULL
@@ -96,78 +93,67 @@ is.short_opt <- function(x) !is.long_opt(x) && startsWith(x, "-")
 is.valid_name <- function(x) make.names(x) == x
 
 #' Script
-#' @param cmd Command with description, args to parse, and list of params
+#' @param cmd Command with description and list of params
 #' @param fun Function to execute with arguments supplied from the command line
-#' @importFrom stringr str_detect str_split
-#' @importFrom utils tail
 #' @export
 script <- function(cmd, fun) {
-  stopifnot(class(fun) == 'function')
-  cmd$script <- fun
-  function(args = commandArgs(trailingOnly = TRUE)) {
-
+  stopifnot(class(fun) == "function")
+  # Must attach contents of cmd to the current environment for the
+  # function returned by script to reference them after creation.
+  list2env(cmd, envir = environment())  # attaches description & params
+  function(...) {
+    args <- c(...)
+    if (!length(args)) {
+      args <- commandArgs(trailingOnly = TRUE)
+    }
+    print(args)
+    if ("--help" %in% args || args == "") {
+      cat(build_help_page(description, params))
+      return(invisible())
+    }
+    vals <- parse_args(params, args)
+    do.call(fun, vals)
+    invisible()
   }
 }
 
-get_defaults <- function(cmd) {
-  lapply(cmd$params, function(param) param$default)
+#' Help page
+#' @param description What does the script do?
+#' @param params List of script parameters (options and arguments)
+build_help_page <- function(description, params) {
+  # Build more advanced help page later
+  help_page <- paste0(description, "\n\n")
+  for (param in params) {
+    help_page <- paste0(help_page, param$long_opt, ": ", param$help, "\n")
+  }
+  help_page
 }
 
-parse_args <- function(cmd, args) {
+get_defaults <- function(params) {
+  lapply(params, function(param) param$default)
+}
+
+parse_args <- function(params, args) {
   # call getopt here
   # should return list with args and opts
 
-  # Do some basic parsing here to see if "--help" is called
-
-  # Print help page and exit
-  if (str_detect(parse, "--help") || parse == "") {
-    # Substitute later with formatted help page
-    help_page <- NULL
-    for (param in params) {
-      help_page <- paste(help_page, paste0(param$long_opt, ": ", param$help), sep = "\n")
-    }
-    return(function() cat(help_page))
-  }
-
   # parse <- unlist(str_split(parse, " "))
   # parse <- parse[parse != ""]
-  defaults <- get_defaults(cmd)
-  values <- parse_input(cmd)
+  defaults <- get_defaults(params)
+  # values <- callgetopt(...)
   values <- merge_lists(defaults, values)
-
-  # for (param_name in names(params)) {
-  #   param <- params[[param_name]]
-  #   if (class(param) == "option") {
-  #     for (parslet in parse) {
-  #       if (startsWith(parslet, param$long_opt) || startsWith(parslet, param$short_opt)) {
-  #         if (param$type == "logical") {
-  #           values[[param_name]] <- !param$default
-  #         }
-  #         if (str_detect(parslet, "=")) {
-  #           split_parslet <- unlist(str_split(parslet, "="))
-  #           param_value <- as.type(tail(split_parslet, 1), param$type)
-  #           if (!is.null(param$choice)) {
-  #             stopifnot(param_value %in% param$choice)
-  #           }
-  #           values[[param_name]] <- param_value
-  #         }
-  #       }
-  #     }
-  #   }
-  # }
-  #
   function() do.call(fun, values)
 }
 
 merge_lists <- function(...) {
   lists <- list(...)
-  master_list <- lists[[1]]
-  for (lst in lists[-1]) {
-    for (name in names(lst)) {
-      master_list[[name]] <- lst[[name]]
+  merged_list <- list()
+  for (list_ in lists) {
+    for (name in names(list_)) {
+      merged_list[[name]] <- list_[[name]]
     }
   }
-  master_list
+  merged_list
 }
 
 #' Simple function to remove option prefix
@@ -180,10 +166,11 @@ remove_prefix <- function(x) {
 }
 
 as.type <- function(x, type) {
-  if (type == "character") return(as.character(x))
-  if (type == "logical")   return(as.logical(x))
-  if (type == "integer")   return(as.integer(x))
-  if (type == "numeric")   return(as.numeric(x))
-  if (type == "complex")   return(as.complex(x))
-  x
+  switch(type,
+         character = as.character(x),
+         logical = as.logical(x),
+         integer = as.integer(x),
+         numeric = as.numeric(x),
+         complex = as.complex(x),
+         x)
 }

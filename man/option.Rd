@@ -8,7 +8,7 @@ option(cmd, ..., default = NULL, type = NULL, choice = NULL,
   is.flag = FALSE, help = "")
 }
 \arguments{
-\item{cmd}{Command with description, args to parse, and list of params}
+\item{cmd}{Command with description and list of params}
 
 \item{...}{Long and short options}
 

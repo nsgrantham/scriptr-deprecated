@@ -20,4 +20,4 @@ greet <- command("Print a warm greeting.") %>%
     print(rep(greeting, count))
   })
 
-greet("--yell", "--name=my\ friend")
+greet()

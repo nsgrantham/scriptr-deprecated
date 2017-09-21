@@ -4,10 +4,10 @@
 \alias{argument}
 \title{Argument}
 \usage{
-argument(cmd, name, default = NULL, nargs = 1, help = "")
+argument(cmd, name, nargs = 1, help = "")
 }
 \arguments{
-\item{cmd}{Command with description, args to parse, and list of params}
+\item{cmd}{Command with description and list of params}
 
 \item{name}{Name of argument(s)}
 
