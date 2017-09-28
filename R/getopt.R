@@ -1,10 +1,10 @@
 #' Parse command-line arguments using standard libc functions
 #'
-#' @param params List of script parameters
+#' @param cmd Command with description and list of params
 #' @param args Command line arguments
 #' @export
-parse_args <- function(params, args) {
-  getopt_params <- lapply(params, prepare_getopt_param)
+parse_args <- function(cmd, args) {
+  getopt_params <- lapply(cmd$params, prepare_getopt_param)
   # HACK: libc in getopt assumes first element of args vector is the command
   # call and skips it, so give it empty string to skip
   getopt_args <- c("", args)
@@ -12,9 +12,7 @@ parse_args <- function(params, args) {
   if (!is.null(attr(getopt_values, "error"))) {
     stop("Error parsing command arguments")
   }
-  defaults <- lapply(params, function(param) param$default)
-  values <- process_getopt_values(params, getopt_values)
-  values <- merge_lists(defaults, values)
+  values <- process_getopt_values(cmd$params, getopt_values)
   values
 }
 

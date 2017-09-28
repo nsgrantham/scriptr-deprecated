@@ -95,32 +95,40 @@ option <- function(cmd, ..., default = NULL, type = NULL, choice = NULL, is.flag
 #' @export
 script <- function(cmd, fun) {
   stopifnot(class(fun) == "function")
-  # Must attach contents of cmd to the current environment for the
-  # function returned by script to reference them after creation.
-  list2env(cmd, envir = environment())  # attaches description & params
+  # If cmd is passed to script via method chaining with `%>%`, rhe function
+  # returned by script is unable to access cmd when it is called, so save
+  # cmd to the current environment.
+  cmd <- cmd
   function(...) {
     args <- c(...)
     if (!length(args)) {
       args <- commandArgs(trailingOnly = TRUE)
     }
     if ("--help" %in% args || identical(args, character(0))) {
-      cat(build_help_page(description, params))
+      cat(build_help_page(cmd))
       return(invisible())
     }
-    vals <- parse_args(params, args)
-    do.call(fun, vals)
+    defaults <- get_defaults(cmd)
+    values <- parse_args(cmd, args)
+    do.call(fun, merge_lists(defaults, values))
     invisible()
   }
 }
 
+#' Get default values of params
+#'
+#' @param cmd Command with description and list of params
+get_defaults <- function(cmd) {
+  lapply(cmd$params, function(x) x$default)
+}
+
 #' Help page
 #'
-#' @param description What does the script do?
-#' @param params List of script parameters (options and arguments)
-build_help_page <- function(description, params) {
+#' @param cmd Command with description and list of params
+build_help_page <- function(cmd) {
   # Build more advanced help page later
-  help_page <- paste0(description, "\n\n")
-  for (param in params) {
+  help_page <- paste0(cmd$description, "\n\n")
+  for (param in cmd$params) {
     help_page <- paste0(help_page, param$long_opt, ": ", param$help, "\n")
   }
   help_page

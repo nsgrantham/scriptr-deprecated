@@ -9,9 +9,9 @@ greet_cmd <- command("Print a warm greeting.") %>%
 
 
 test_that('Example greeter parses correctly', {
-  o1 <- parse_args(greet_cmd, argv = c("--name=World"))
+  o1 <- parse_args(greet_cmd, c("--name=World"))
   expect_equal(o1, list(name='World'))
 
-  o2 <- parse_args(greet_cmd, argv = c("-n", "World"))
+  o2 <- parse_args(greet_cmd, c("-n", "World"))
   expect_equal(o2, list(name='World'))
 })

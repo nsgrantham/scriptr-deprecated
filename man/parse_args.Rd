@@ -4,10 +4,10 @@
 \alias{parse_args}
 \title{Parse command-line arguments using standard libc functions}
 \usage{
-parse_args(params, args)
+parse_args(cmd, args)
 }
 \arguments{
-\item{params}{List of script parameters}
+\item{cmd}{Command with description and list of params}
 
 \item{args}{Command line arguments}
 }

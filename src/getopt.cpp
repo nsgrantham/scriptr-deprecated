@@ -60,7 +60,7 @@ List callgetopt(CharacterVector args, ListOf<List> opts) {
     string shortSuffix = "";
     if (opttype == "required") {
       optargs[i].has_arg = required_argument;
-      shortSuffix = "::";
+      shortSuffix = ":";
     } else if (opttype == "flag") {
       optargs[i].has_arg = no_argument;
     } else {
