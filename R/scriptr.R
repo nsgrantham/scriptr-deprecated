@@ -95,7 +95,7 @@ option <- function(cmd, ..., default = NULL, type = NULL, choice = NULL, is.flag
 #' @export
 script <- function(cmd, fun) {
   stopifnot(class(fun) == "function")
-  # If cmd is passed to script via method chaining with `%>%`, rhe function
+  # If cmd is passed to script via method chaining with `%>%`, the function
   # returned by script is unable to access cmd when it is called, so save
   # cmd to the current environment.
   cmd <- cmd
@@ -111,7 +111,7 @@ script <- function(cmd, fun) {
     defaults <- get_defaults(cmd)
     values <- parse_args(cmd, args)
     do.call(fun, merge_lists(defaults, values))
-    invisible()
+    invisible(TRUE)
   }
 }
 
