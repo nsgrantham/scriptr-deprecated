@@ -2,6 +2,6 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 callgetopt <- function(args, opts) {
-    .Call('_scriptr_callgetopt', PACKAGE = 'scriptr', args, opts)
+    .Call('scriptr_callgetopt', PACKAGE = 'scriptr', args, opts)
 }
 

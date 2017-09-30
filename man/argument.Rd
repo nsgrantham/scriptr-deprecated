@@ -7,7 +7,7 @@
 argument(cmd, name, nargs = 1, help = "")
 }
 \arguments{
-\item{cmd}{Command with description, args to parse, and list of params}
+\item{cmd}{Command with description and list of params}
 
 \item{name}{Name of argument(s)}
 

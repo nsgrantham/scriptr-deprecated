@@ -4,12 +4,12 @@
 \alias{parse_args}
 \title{Parse command-line arguments using standard libc functions}
 \usage{
-parse_args(cmd, argv = commandArgs(TRUE))
+parse_args(cmd, args)
 }
 \arguments{
-\item{cmd}{command definition, of the form list(a='long-a',b='long-b')}
+\item{cmd}{Command with description and list of params}
 
-\item{argv}{arguments to parse (excluding command name)}
+\item{args}{Command line arguments}
 }
 \description{
 Parse command-line arguments using standard libc functions
