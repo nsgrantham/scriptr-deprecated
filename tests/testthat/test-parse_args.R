@@ -28,24 +28,24 @@ test_that('getopt parses valid arguments correctly for greeter example', {
 
   # long flag
   o4l <- parse_args(greet_cmd, c("--yell"))
-  expect_true('yell' %in% names(o4l))
+  expect_true(o4l$yell, TRUE)
 
   # short flag
   o4s <- parse_args(greet_cmd, c("-y"))
-  expect_true('yell' %in% names(o4s))
+  expect_true(o4s$yell, TRUE)
 
   # multiple long arguments
   o5l <- parse_args(greet_cmd, c("--name=World", "--count=4"))
   expect_equal(o5l$name, 'World')
-  expect_equal(o5l$count, '4')
+  expect_equal(o5l$count, 4)
 
   # multiple short arguments
-  o5s <- parse_args(greet_cmd, c("-n", "World", "-c", "4"))
+  o5s <- parse_args(greet_cmd, c("-n", "World", "-c4"))
   expect_equal(o5s$name, 'World')
-  expect_equal(o5s$count, '4')
+  expect_equal(o5s$count, 4)
 
   # mixed length arguments
-  o5m <- parse_args(greet_cmd, c("--name=World", "-c", "4"))
+  o5m <- parse_args(greet_cmd, c("-n", "World", "--count=4"))
   expect_equal(o5m$name, 'World')
-  expect_equal(o5m$count, '4')
+  expect_equal(o5m$count, 4)
 })
