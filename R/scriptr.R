@@ -14,12 +14,18 @@ command <- function(description) {
 
 #' Argument
 #' @param cmd Command with description and list of params
-#' @param name Name of argument(s)
+#' @param name Name of argument
 #' @param nargs Number of arguments (-1 for unlimited)
 #' @param help Description of argument for help page
+#' @export
 argument <- function(cmd, name, nargs = 1, help = "") {
   stopifnot(class(cmd) == "command")
-  cmd[[name]] <- structure(
+  stopifnot(nargs == Inf || is.wholenumber(nargs))
+  stopifnot(nargs > 0)
+  if (sum(c(nargs, unlist(get_nargs(cmd))) == Inf) > 1) {
+    stop("Only one argument with nargs = Inf is allowed.")
+  }
+  cmd$params[[name]] <- structure(
     list(
       nargs = nargs,
       help = help
@@ -94,6 +100,7 @@ option <- function(cmd, ..., default = NULL, type = NULL, choice = NULL, is.flag
 #' @param fun Function to execute with arguments supplied from the command line
 #' @export
 script <- function(cmd, fun) {
+  stopifnot(class(cmd) == "command")
   stopifnot(class(fun) == "function")
   # If cmd is passed to script via method chaining with `%>%`, the function
   # returned by script is unable to access cmd when it is called, so save
@@ -120,6 +127,27 @@ script <- function(cmd, fun) {
 #' @param cmd Command with description and list of params
 get_defaults <- function(cmd) {
   lapply(cmd$params, function(x) x$default)
+}
+
+#' Get all argument params
+#'
+#' @param cmd Command with description and list of params
+get_arguments <- function(cmd) {
+  Filter(function(x) class(x) == "argument", cmd$params)
+}
+
+#' Get all nargs value from arguments
+#'
+#' @param cmd Command with description and list of params
+get_nargs <- function(cmd) {
+  lapply(get_arguments(cmd), function(x) x$nargs)
+}
+
+#' Get all option params
+#'
+#' @param cmd Command with description and list of params
+get_options <- function(cmd) {
+  Filter(function(x) class(x) == "option", cmd$params)
 }
 
 #' Help page

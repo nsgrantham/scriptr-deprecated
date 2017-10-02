@@ -4,10 +4,10 @@
 \alias{process_getopt_values}
 \title{Convert strings returned by getopt into appropriate R types}
 \usage{
-process_getopt_values(params, values)
+process_getopt_values(cmd, values)
 }
 \arguments{
-\item{params}{List of script parameters}
+\item{cmd}{Command list}
 
 \item{values}{List of script values in strings}
 }

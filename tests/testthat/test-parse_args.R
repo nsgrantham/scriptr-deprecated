@@ -19,12 +19,6 @@ test_that('getopt parses valid arguments correctly for greeter example', {
   # a single short argument
   o2 <- parse_args(greet_cmd, c("-n", "World"))
   expect_equal(o2$name, 'World')
-  expect_equal(attr(o2, 'positional'), character(0))
-
-  # positional arguments
-  o3 <- parse_args(greet_cmd, c("-n", "World", "One", "Two"))
-  expect_equal(o3$name, 'World')
-  expect_equal(attr(o3, 'positional'), c('One', 'Two'))
 
   # long flag
   o4l <- parse_args(greet_cmd, c("--yell"))
@@ -48,4 +42,26 @@ test_that('getopt parses valid arguments correctly for greeter example', {
   o5m <- parse_args(greet_cmd, c("-n", "World", "--count=4"))
   expect_equal(o5m$name, 'World')
   expect_equal(o5m$count, 4)
+})
+
+cmd <- command("Example #1 with multiple arguments.") %>%
+  argument("first", nargs = 3) %>%
+  argument("last")
+
+test_that('getopt parses valid arguments correctly for example', {
+  o <- parse_args(cmd, c("One", "Two", "Three", "Four"))
+  expect_equal(o$first, c("One", "Two", "Three"))
+  expect_equal(o$last, "Four")
+})
+
+cmd <- command("Example #1 with multiple arguments.") %>%
+  argument("first") %>%
+  argument("middle", nargs = Inf) %>%
+  argument("last")
+
+test_that('getopt parses valid arguments correctly for example', {
+  o <- parse_args(cmd, c("One", "Two", "Three", "Four"))
+  expect_equal(o$first, "One")
+  expect_equal(o$middle, c("Two", "Three"))
+  expect_equal(o$last, "Four")
 })

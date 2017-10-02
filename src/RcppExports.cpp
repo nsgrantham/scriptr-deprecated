@@ -7,7 +7,7 @@ using namespace Rcpp;
 
 // callgetopt
 List callgetopt(CharacterVector args, ListOf<List> opts);
-RcppExport SEXP scriptr_callgetopt(SEXP argsSEXP, SEXP optsSEXP) {
+RcppExport SEXP _scriptr_callgetopt(SEXP argsSEXP, SEXP optsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -19,7 +19,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"scriptr_callgetopt", (DL_FUNC) &scriptr_callgetopt, 2},
+    {"_scriptr_callgetopt", (DL_FUNC) &_scriptr_callgetopt, 2},
     {NULL, NULL, 0}
 };
 

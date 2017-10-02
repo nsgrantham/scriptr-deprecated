@@ -17,6 +17,13 @@ is.valid_name <- function(x) {
   make.names(x) == x
 }
 
+#' Check if numeric value is an integer
+#' (Does not use the name is.integer because it is already defined in base)
+#' @param x Numeric
+is.wholenumber <- function(x) {
+  x %% 1 == 0
+}
+
 #' Helper function to merge lists (left to right)
 #'
 #' @param ... Lists to merge
