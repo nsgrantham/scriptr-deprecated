@@ -104,7 +104,7 @@ script <- function(cmd, fun) {
   stopifnot(class(fun) == "function")
   # If cmd is passed to script via method chaining with `%>%`, the function
   # returned by script is unable to access cmd when it is called, so save
-  # cmd to the current environment.
+  # cmd to the current environment. (Strange... Am I missing something?)
   cmd <- cmd
   function(...) {
     args <- c(...)
@@ -148,16 +148,4 @@ get_nargs <- function(cmd) {
 #' @param cmd Command with description and list of params
 get_options <- function(cmd) {
   Filter(function(x) class(x) == "option", cmd$params)
-}
-
-#' Help page
-#'
-#' @param cmd Command with description and list of params
-build_help_page <- function(cmd) {
-  # Build more advanced help page later
-  help_page <- paste0(cmd$description, "\n\n")
-  for (param in cmd$params) {
-    help_page <- paste0(help_page, param$long_opt, ": ", param$help, "\n")
-  }
-  help_page
 }
