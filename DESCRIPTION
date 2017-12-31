@@ -2,7 +2,7 @@ Package: scriptr
 Title: Compose Command Line Programs with Ease
 Author: Neal Grantham <neal@nsgrantham.com>
 Maintainer: Neal Grantham <neal@nsgrantham.com>
-Version: 0.0.1.9000
+Version: 0.0.2
 Description: Tools to construct scripts that easily accept inputs from the command line in the form of arguments and options.
 Depends: R (>= 3.3.3)
 License: MIT + file LICENSE
