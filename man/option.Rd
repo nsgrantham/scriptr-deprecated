@@ -4,8 +4,8 @@
 \alias{option}
 \title{Option}
 \usage{
-option(cmd, ..., default = NULL, type = NULL, choice = NULL,
-  is.flag = FALSE, help = "")
+option(cmd, ..., default = NULL, type = NULL, is.flag = FALSE,
+  help = "")
 }
 \arguments{
 \item{cmd}{Command with description and list of params}
@@ -14,9 +14,7 @@ option(cmd, ..., default = NULL, type = NULL, choice = NULL,
 
 \item{default}{Default option value if none is given}
 
-\item{type}{Data type (character, logical, integer, numeric, complex)}
-
-\item{choice}{Vector of possible values}
+\item{type}{String of data type, scriptr::interval, or scriptr::choice}
 
 \item{is.flag}{Is this a simple logical flag?}
 

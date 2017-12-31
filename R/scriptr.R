@@ -15,10 +15,11 @@ command <- function(description) {
 #' Argument
 #' @param cmd Command with description and list of params
 #' @param name Name of argument
-#' @param nargs Number of arguments (-1 for unlimited)
+#' @param nargs Number of arguments (Inf for unlimited)
+#' @param type String of data type, scriptr::interval, or scriptr::choice
 #' @param help Description of argument for help page
 #' @export
-argument <- function(cmd, name, nargs = 1, help = "") {
+argument <- function(cmd, name, type = "character", nargs = 1, help = "") {
   stopifnot(class(cmd) == "command")
   stopifnot(nargs == Inf || is.wholenumber(nargs))
   stopifnot(nargs > 0)
@@ -28,6 +29,7 @@ argument <- function(cmd, name, nargs = 1, help = "") {
   cmd$params[[name]] <- structure(
     list(
       nargs = nargs,
+      type = type,
       help = help
     ),
     class = "argument"
@@ -40,13 +42,12 @@ argument <- function(cmd, name, nargs = 1, help = "") {
 #' @param cmd Command with description and list of params
 #' @param ... Long and short options
 #' @param default Default option value if none is given
-#' @param type Data type (character, logical, integer, numeric, complex)
-#' @param choice Vector of possible values
+#' @param type String of data type, scriptr::interval, or scriptr::choice
 #' @param is.flag Is this a simple logical flag?
 #' @param help Description of option for help page
 #' @importFrom stringr str_replace_all
 #' @export
-option <- function(cmd, ..., default = NULL, type = NULL, choice = NULL, is.flag = FALSE, help = "") {
+option <- function(cmd, ..., default = NULL, type = NULL, is.flag = FALSE, help = "") {
   stopifnot(class(cmd) == "command")
   opts <- list(...)
   long_opt <- NULL
@@ -84,7 +85,6 @@ option <- function(cmd, ..., default = NULL, type = NULL, choice = NULL, is.flag
     list(
       long_opt = long_opt,
       short_opt = short_opt,
-      choice = choice,
       type = type,
       default = default,
       help = help
@@ -120,6 +120,42 @@ script <- function(cmd, fun) {
     do.call(fun, merge_lists(defaults, values))
     invisible(TRUE)
   }
+}
+
+#' Interval
+#'
+#' @param lower Lower bound of interval
+#' @param upper Upper bound of interval
+#' @param exclusive Exclude bounds?
+#' @param exclude_lower Exclude lower bound?
+#' @param exclude_upper Exclude upper bound?
+#' @export
+interval <- function(lower, upper, exclusive = FALSE,
+                     exclude_lower = FALSE, exclude_upper = FALSE) {
+  int <- structure(
+    list(
+      lower = lower,
+      upper = upper,
+      exclude_lower = ifelse(exclusive, TRUE, exclude_lower),
+      exclude_upper = ifelse(exclusive, TRUE, exclude_upper)
+    ),
+    class = "interval"
+  )
+  int
+}
+
+#' Choice
+#'
+#' @param ... Valid values to choose from
+#' @export
+choice <- function(...) {
+  cho <- structure(
+    list(
+      choices = unlist(list(...))
+    ),
+    class = "choice"
+  )
+  cho
 }
 
 #' Get default values of params
@@ -160,9 +196,4 @@ get_options <- function(cmd) {
 #' @rdname pipe
 #' @export
 #' @param lhs,rhs A command and an argument, option, or script to apply to it
-#' @examples
-#' # Instead of
-#' script(option(command("Powers of 2"), "--pow", default = 1), function(pow) print(2^pow))
-#' # you can write
-#' command("Powers of 2") %>% option("--pow", default = 1) %>% script(function(pow) print(2^pow))
 NULL

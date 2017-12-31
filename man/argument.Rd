@@ -4,14 +4,16 @@
 \alias{argument}
 \title{Argument}
 \usage{
-argument(cmd, name, nargs = 1, help = "")
+argument(cmd, name, type = "character", nargs = 1, help = "")
 }
 \arguments{
 \item{cmd}{Command with description and list of params}
 
 \item{name}{Name of argument}
 
-\item{nargs}{Number of arguments (-1 for unlimited)}
+\item{type}{String of data type, scriptr::interval, or scriptr::choice}
+
+\item{nargs}{Number of arguments (Inf for unlimited)}
 
 \item{help}{Description of argument for help page}
 }

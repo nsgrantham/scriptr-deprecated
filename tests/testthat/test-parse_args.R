@@ -3,7 +3,7 @@ context('Verify arguments are correctly parsed')
 greet_cmd <- command("Print a warm greeting.") %>%
   option("--name", "-n", type = "character", help = "Name to be greeted.") %>%
   option("--count", "-c", default = 1, help = "Number of times to greet.") %>%
-  option("--lang", "-l", default = "en", choice = c("en", "es", "se", "jp"),
+  option("--lang", "-l", default = "en", type = choice("en", "es", "se", "jp"),
          help = "Language to greet in.") %>%
   option("--yell", "-y", is.flag = TRUE, help = "Greet with enthusiasm!")
 
@@ -42,6 +42,17 @@ test_that('getopt parses valid arguments correctly for greeter example', {
   o5m <- parse_args(greet_cmd, c("-n", "World", "--count=4"))
   expect_equal(o5m$name, 'World')
   expect_equal(o5m$count, 4)
+})
+
+log_cmd <- command("Compute the logarithm of a given value.") %>%
+  argument("value", type = scriptr::interval(0, Inf, exclude_lower = TRUE),
+           help = "Input to the logarithm.") %>%
+  option("--base", "-b", default = exp(1),
+         help = "Base of the logarithm (default = e, the natural logarithm).")
+
+test_that('Logarithm command parses correctly', {
+  o1 <- parse_args(log_cmd, c('1'))
+  expect_equal(o1$value, '1')
 })
 
 cmd <- command("Example #1 with multiple arguments.") %>%

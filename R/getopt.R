@@ -50,8 +50,18 @@ process_getopt_values <- function(cmd, values) {
       opt <- opts[[value_name]]
       if (val == "" && opt$type == "logical") {
         values[[value_name]] <- !opt$default
-      } else {
+      } else if (opt$type %in% c("character", "logical", "integer", "numeric", "complex")) {
         values[[value_name]] <- as.type(val, opt$type)
+      } else if (class(opt$type) == "interval") {
+        int <- opt$type
+        stopifnot((int$lower <= val) && (val <= int$upper))
+        if (int$exclude_lower) stopifnot(val != int$lower)
+        if (int$exclude_upper) stopifnot(val != int$upper)
+        values[[value_name]] <- as.numeric(val)
+      } else if (class(opt$type) == "choice") {
+        cho <- opt$type
+        stopifnot(val %in% cho$choices)
+        values[[value_name]] <- val
       }
     }
   }
@@ -88,7 +98,16 @@ process_getopt_values <- function(cmd, values) {
     }
     for (arg_name in names(args)) {
       arg <- args[[arg_name]]
-      values[[arg_name]] <- args_given[arg$begin:arg$end]
+      arg_vals <- args_given[arg$begin:arg$end]
+      if (class(arg$type) == "interval") {
+        int <- arg$type
+        for (val in arg_vals) {
+          stopifnot((int$lower <= val) && (val <= int$upper))
+          if (int$exclude_lower) stopifnot(val != int$lower)
+          if (int$exclude_upper) stopifnot(val != int$upper)
+        }
+      }
+      values[[arg_name]] <- arg_vals
     }
   }
 

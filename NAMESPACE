@@ -2,7 +2,9 @@
 
 export("%>%")
 export(argument)
+export(choice)
 export(command)
+export(interval)
 export(option)
 export(parse_args)
 export(prepare_getopt_param)

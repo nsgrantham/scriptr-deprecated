@@ -10,9 +10,3 @@
 scriptr is designed for use with magrittr's pipe function, \code{\%>\%},
 to turn function composition into a series of imperative statements.
 }
-\examples{
-# Instead of
-script(option(command("Powers of 2"), "--pow", default = 1), function(pow) print(2^pow))
-# you can write
-command("Powers of 2") \%>\% option("--pow", default = 1) \%>\% script(function(pow) print(2^pow))
-}

@@ -1,9 +1,10 @@
 library(scriptr)
 
 greet <- command("Print a warm greeting.") %>%
-  option("--name", type="character",  help = "Name to be greeted.") %>%
+  option("--name", type = "character",  help = "Name to be greeted.") %>%
   option("--count", "-c", default = 1, help = "Number of times to greet.") %>%
-  option("--lang", "-l", default = "en", choice = c("en", "es", "se", "ja"), help = "Language to greet in.") %>%
+  option("--lang", "-l", default = "en", type = c("en", "es", "se", "ja"),
+         help = "Language to greet in.") %>%
   option("--yell", "-y", is.flag = TRUE, help = "Greet with enthusiasm!") %>%
   script(function(name, count, lang, yell) {
     hello <- list(
