@@ -8,10 +8,7 @@ Depends: R (>= 3.3.3)
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
-Imports: roxygen2, stringr,
-    Rcpp
+Imports: magrittr, roxygen2, stringr, Rcpp
 RoxygenNote: 6.0.1
-Suggests: covr,
-    testthat,
-    magrittr
+Suggests: covr, testthat
 LinkingTo: Rcpp

@@ -149,3 +149,20 @@ get_nargs <- function(cmd) {
 get_options <- function(cmd) {
   Filter(function(x) class(x) == "option", cmd$params)
 }
+
+#' Pipe
+#'
+#' scriptr is designed for use with magrittr's pipe function, \code{\%>\%},
+#' to turn function composition into a series of imperative statements.
+#'
+#' @importFrom magrittr %>%
+#' @name %>%
+#' @rdname pipe
+#' @export
+#' @param lhs,rhs A command and an argument, option, or script to apply to it
+#' @examples
+#' # Instead of
+#' script(option(command("Powers of 2"), "--pow", default = 1), function(pow) print(2^pow))
+#' # you can write
+#' command("Powers of 2") %>% option("--pow", default = 1) %>% script(function(pow) print(2^pow))
+NULL

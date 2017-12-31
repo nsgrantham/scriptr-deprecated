@@ -1,5 +1,4 @@
 library(scriptr)
-library(magrittr)
 
 greet <- command("Print a warm greeting.") %>%
   option("--name", type="character",  help = "Name to be greeted.") %>%
