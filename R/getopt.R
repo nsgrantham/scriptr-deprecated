@@ -24,8 +24,6 @@ prepare_getopt_param <- function(param) {
   if (class(param) == "option") {
     if (param$type == "logical") {
       opttype <- "flag"
-    } else if (!is.null(param$default)) {
-      opttype <- "optional"
     } else {
       opttype <- "required"
     }

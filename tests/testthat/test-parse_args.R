@@ -1,4 +1,4 @@
-context('verify arguments are correctly parsed')
+context('Verify arguments are correctly parsed')
 
 greet_cmd <- command("Print a warm greeting.") %>%
   option("--name", "-n", type = "character", help = "Name to be greeted.") %>%
@@ -61,6 +61,20 @@ cmd <- command("Example #1 with multiple arguments.") %>%
 
 test_that('getopt parses valid arguments correctly for example', {
   o <- parse_args(cmd, c("One", "Two", "Three", "Four"))
+  expect_equal(o$first, "One")
+  expect_equal(o$middle, c("Two", "Three"))
+  expect_equal(o$last, "Four")
+})
+
+cmd <- command("Example #2 with mixed arguments and options.") %>%
+  option("--myopt", "-m", type = "character", help = "A character option") %>%
+  argument("first") %>%
+  argument("middle", nargs = Inf) %>%
+  argument("last")
+
+test_that('getopt parses valid arguments correctly for example', {
+  o <- parse_args(cmd, c("--myopt", "String", "One", "Two", "Three", "Four"))
+  expect_equal(o$myopt, "String")
   expect_equal(o$first, "One")
   expect_equal(o$middle, c("Two", "Three"))
   expect_equal(o$last, "Four")
