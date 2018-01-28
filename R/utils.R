@@ -56,6 +56,7 @@ as.type <- function(x, type) {
          character = as.character(x),
          logical = as.logical(x),
          integer = as.integer(x),
+         double = as.double(x),
          numeric = as.numeric(x),
          complex = as.complex(x),
          x)

@@ -71,7 +71,7 @@ option <- function(cmd, ..., default = NULL, type = NULL, is.flag = FALSE, help 
 
   if (is.flag) {
     type <- "logical"
-    default <- if(!is.null(default)) default else FALSE
+    default <- if (!is.null(default)) default else FALSE
   }
   if (is.null(type)) {
     if (!is.null(default)) {
@@ -79,6 +79,10 @@ option <- function(cmd, ..., default = NULL, type = NULL, is.flag = FALSE, help 
     } else {
       stop(paste("Type declaration required for", name, "since no default is given."))
     }
+  }
+  if (!(class(type) %in% c('choice', 'interval')) &&
+      (type %in% ATOMIC_DATA_TYPES)) {
+    type <- atomic(type)
   }
 
   cmd$params[[name]] <- structure(
@@ -94,6 +98,20 @@ option <- function(cmd, ..., default = NULL, type = NULL, is.flag = FALSE, help 
   cmd
 }
 
+ATOMIC_DATA_TYPES <- c('logical', 'character', 'numeric', 'integer', 'double', 'complex')
+
+#' R Atomic Data type
+#' @param type String of desired R atomic data type
+atomic <- function(type) {
+  stopifnot(type %in% ATOMIC_DATA_TYPES)
+  atm <- structure(
+    list(
+      class = type
+    ),
+    class = 'atomic'
+  )
+  atm
+}
 
 #' Script
 #' @param cmd Command with description and list of params
@@ -189,7 +207,7 @@ get_options <- function(cmd) {
 #' Pipe
 #'
 #' scriptr is designed for use with magrittr's pipe function, \code{\%>\%},
-#' to turn function composition into a series of imperative statements.
+#' which turns function composition into a series of imperative statements.
 #'
 #' @importFrom magrittr %>%
 #' @name %>%

@@ -8,5 +8,5 @@
 }
 \description{
 scriptr is designed for use with magrittr's pipe function, \code{\%>\%},
-to turn function composition into a series of imperative statements.
+which turns function composition into a series of imperative statements.
 }

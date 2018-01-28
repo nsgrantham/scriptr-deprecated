@@ -22,7 +22,7 @@ parse_args <- function(cmd, args) {
 #' @export
 prepare_getopt_param <- function(param) {
   if (class(param) == "option") {
-    if (param$type == "logical") {
+    if ((class(param$type) == 'atomic') && (param$type$class == "logical")) {
       opttype <- "flag"
     } else {
       opttype <- "required"
@@ -48,17 +48,19 @@ process_getopt_values <- function(cmd, values) {
     for (value_name in names(values)) {
       val <- values[[value_name]]
       opt <- opts[[value_name]]
-      if (val == "" && opt$type == "logical") {
-        values[[value_name]] <- !opt$default
-      } else if (opt$type %in% c("character", "logical", "integer", "numeric", "complex")) {
-        values[[value_name]] <- as.type(val, opt$type)
-      } else if (class(opt$type) == "interval") {
+      if (class(opt$type) == 'atomic') {
+        if ((opt$type$class == 'logical') && (val == '')) {
+          values[[value_name]] <- !opt$default
+        } else {
+          values[[value_name]] <- as.type(val, opt$type$class)
+        }
+      } else if (class(opt$type) == 'interval') {
         int <- opt$type
         stopifnot((int$lower <= val) && (val <= int$upper))
         if (int$exclude_lower) stopifnot(val != int$lower)
         if (int$exclude_upper) stopifnot(val != int$upper)
         values[[value_name]] <- as.numeric(val)
-      } else if (class(opt$type) == "choice") {
+      } else if (class(opt$type) == 'choice') {
         cho <- opt$type
         stopifnot(val %in% cho$choices)
         values[[value_name]] <- val
