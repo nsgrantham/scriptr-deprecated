@@ -42,7 +42,7 @@ argument <- function(cmd, name, type = "character", nargs = 1, help = "") {
 #' @param cmd Command with description and list of params
 #' @param ... Long and short options
 #' @param default Default option value if none is given
-#' @param type String of data type, scriptr::interval, or scriptr::choice
+#' @param type String of atomic data type, scriptr::interval, or scriptr::choice
 #' @param is.flag Is this a simple logical flag?
 #' @param help Description of option for help page
 #' @importFrom stringr str_replace_all
@@ -87,6 +87,7 @@ option <- function(cmd, ..., default = NULL, type = NULL, is.flag = FALSE, help 
 
   cmd$params[[name]] <- structure(
     list(
+      name = long_opt,
       long_opt = long_opt,
       short_opt = short_opt,
       type = type,

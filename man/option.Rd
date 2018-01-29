@@ -14,7 +14,7 @@ option(cmd, ..., default = NULL, type = NULL, is.flag = FALSE,
 
 \item{default}{Default option value if none is given}
 
-\item{type}{String of data type, scriptr::interval, or scriptr::choice}
+\item{type}{String of atomic data type, scriptr::interval, or scriptr::choice}
 
 \item{is.flag}{Is this a simple logical flag?}
 

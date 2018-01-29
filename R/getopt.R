@@ -55,14 +55,11 @@ process_getopt_values <- function(cmd, values) {
           values[[value_name]] <- as.type(val, opt$type$class)
         }
       } else if (class(opt$type) == 'interval') {
-        int <- opt$type
-        stopifnot((int$lower <= val) && (val <= int$upper))
-        if (int$exclude_lower) stopifnot(val != int$lower)
-        if (int$exclude_upper) stopifnot(val != int$upper)
+        stopifnot(validate_interval_value(opt, val))
         values[[value_name]] <- as.numeric(val)
       } else if (class(opt$type) == 'choice') {
-        cho <- opt$type
-        stopifnot(val %in% cho$choices)
+        val <- as.type(val, typeof(opt$type$choices))
+        stopifnot(validate_choice_value(opt, val))
         values[[value_name]] <- val
       }
     }
@@ -101,12 +98,15 @@ process_getopt_values <- function(cmd, values) {
     for (arg_name in names(args)) {
       arg <- args[[arg_name]]
       arg_vals <- args_given[arg$begin:arg$end]
-      if (class(arg$type) == "interval") {
-        int <- arg$type
+      if (class(arg$type) == 'interval') {
+        arg_vals <- as.numeric(arg_vals)
         for (val in arg_vals) {
-          stopifnot((int$lower <= val) && (val <= int$upper))
-          if (int$exclude_lower) stopifnot(val != int$lower)
-          if (int$exclude_upper) stopifnot(val != int$upper)
+          stopifnot(validate_interval_value(arg, val))
+        }
+      } else if (class(arg$type) == 'choice') {
+        arg_vals <- as.type(arg_vals, typeof(arg$type$choices))
+        for (val in arg_vals) {
+          stopifnot(validate_choice_value(arg, val))
         }
       }
       values[[arg_name]] <- arg_vals
@@ -116,4 +116,37 @@ process_getopt_values <- function(cmd, values) {
   values
 }
 
+#' Validate value of choice type
+#'
+#' @param param Script parameter
+#' @param value Value of parameter
+#' @importFrom tools toTitleCase
+validate_choice_value <- function(param, value) {
+  stopifnot(class(param$type) == 'choice')
+  if (!(value %in% param$type$choices)) {
+    comma_delim_choices <- paste(param$type$choices, collapse = ", ")
+    stop(paste0(toTitleCase(class(param)), " ", param$name, " does not support value ",
+                value, ", choose from ", comma_delim_choices, "."))
+  }
+  invisible(TRUE)
+}
+
+
+#' Validate value of interval type
+#'
+#' @param param Script parameter
+#' @param value Value of parameter
+#' @importFrom tools toTitleCase
+validate_interval_value <- function(param, value) {
+  stopifnot(class(param$type) == 'interval')
+  int <- param$type
+  if ((value < int$lower || int$upper < value) ||
+      (int$exclude_lower && value == int$lower) ||
+      (int$exclude_upper && value == int$upper)) {
+    stop(paste0(toTitleCase(class(param)), " ", param$name, " does not support value ",
+                value, ", choose from within ", ifelse(int$exclude_lower, '(', '['),
+                int$lower, ", ", int$upper, ifelse(int$exclude_upper, ')', ']'), "."))
+  }
+  invisible(TRUE)
+}
 
