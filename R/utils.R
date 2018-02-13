@@ -1,26 +1,25 @@
 
 #' Check if string is valid long option name
 #' @param x String
-is.long_opt <- function(x) {
+is_long_opt <- function(x) {
   startsWith(x, "--")
 }
 
 #' Check if string is valid short option name
 #' @param x String
-is.short_opt <- function(x) {
-  !is.long_opt(x) && startsWith(x, "-")
+is_short_opt <- function(x) {
+  !is_long_opt(x) && startsWith(x, "-")
 }
 
 #' Check if string is valid variable name
 #' @param x String
-is.valid_name <- function(x) {
+is_valid_name <- function(x) {
   make.names(x) == x
 }
 
 #' Check if numeric value is an integer
-#' (Does not use the name is.integer because it is already defined in base)
 #' @param x Numeric
-is.wholenumber <- function(x) {
+is_integer <- function(x) {
   x %% 1 == 0
 }
 
@@ -42,9 +41,9 @@ merge_lists <- function(...) {
 #' Simple function to remove option prefix
 #' @param x String beginning with '-' or '--'
 #' @importFrom stringr str_sub str_length
-remove_prefix <- function(x) {
-  if (is.long_opt(x))  return(str_sub(x, 3, str_length(x)))
-  if (is.short_opt(x)) return(str_sub(x, 2, str_length(x)))
+remove_opt_prefix <- function(x) {
+  if (is_long_opt(x))  return(str_sub(x, 3, str_length(x)))
+  if (is_short_opt(x)) return(str_sub(x, 2, str_length(x)))
   x
 }
 

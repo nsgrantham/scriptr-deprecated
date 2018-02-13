@@ -5,7 +5,7 @@ greet_cmd <- command("Print a warm greeting.") %>%
   option("--count", "-c", default = 1, help = "Number of times to greet.") %>%
   option("--lang", "-l", default = "en", type = choice("en", "es", "se", "jp"),
          help = "Language to greet in.") %>%
-  option("--yell", "-y", is.flag = TRUE, help = "Greet with enthusiasm!")
+  option("--yell", "-y", flag = TRUE, help = "Greet with enthusiasm!")
 
 test_that('getopt parses valid arguments correctly for greeter example', {
   # no args given

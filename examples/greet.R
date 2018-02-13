@@ -6,7 +6,7 @@ greet <- command("Print a warm greeting.") %>%
   option("--lang", "-l", default = "en",
          type = scriptr::choice(c("en", "es", "se", "ja", "rs")),
          help = "Language to greet in.") %>%
-  option("--yell", "-y", is.flag = TRUE, help = "Greet with enthusiasm!") %>%
+  option("--yell", "-y", flag = TRUE, help = "Greet with enthusiasm!") %>%
   script(function(name, count, lang, yell) {
     hello <- list(
       en = "Hello",

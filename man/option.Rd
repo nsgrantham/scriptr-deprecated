@@ -4,8 +4,7 @@
 \alias{option}
 \title{Option}
 \usage{
-option(cmd, ..., default = NULL, type = NULL, is.flag = FALSE,
-  help = "")
+option(cmd, ..., default = NULL, type = NULL, flag = FALSE, help = "")
 }
 \arguments{
 \item{cmd}{Command with description and list of params}
@@ -16,7 +15,7 @@ option(cmd, ..., default = NULL, type = NULL, is.flag = FALSE,
 
 \item{type}{String of atomic data type, scriptr::interval, or scriptr::choice}
 
-\item{is.flag}{Is this a simple logical flag?}
+\item{flag}{Is this a simple logical flag?}
 
 \item{help}{Description of option for help page}
 }

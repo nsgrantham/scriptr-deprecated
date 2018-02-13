@@ -21,7 +21,7 @@ command <- function(description) {
 #' @export
 argument <- function(cmd, name, type = "character", nargs = 1, help = "") {
   stopifnot(class(cmd) == "command")
-  stopifnot(nargs == Inf || is.wholenumber(nargs))
+  stopifnot(nargs == Inf || is_integer(nargs))
   stopifnot(nargs > 0)
   if (sum(c(nargs, unlist(get_nargs(cmd))) == Inf) > 1) {
     stop("Only one argument with nargs = Inf is allowed.")
@@ -43,33 +43,33 @@ argument <- function(cmd, name, type = "character", nargs = 1, help = "") {
 #' @param ... Long and short options
 #' @param default Default option value if none is given
 #' @param type String of atomic data type, scriptr::interval, or scriptr::choice
-#' @param is.flag Is this a simple logical flag?
+#' @param flag Is this a simple logical flag?
 #' @param help Description of option for help page
 #' @importFrom stringr str_replace_all
 #' @export
-option <- function(cmd, ..., default = NULL, type = NULL, is.flag = FALSE, help = "") {
+option <- function(cmd, ..., default = NULL, type = NULL, flag = FALSE, help = "") {
   stopifnot(class(cmd) == "command")
   opts <- list(...)
   long_opt <- NULL
   short_opt <- NULL
   for (opt in opts) {
-    if (is.long_opt(opt)) {
+    if (is_long_opt(opt)) {
       long_opt <- opt
-    } else if (is.short_opt(opt)) {
+    } else if (is_short_opt(opt)) {
       short_opt <- opt
     }
   }
   if (is.null(long_opt)) {
     stop("Long option (a hyphen-separated name with prefix '--') is required.")
   }
-  name <- str_replace_all(remove_prefix(long_opt), "-", "_")
-  stopifnot(is.valid_name(name))
+  name <- str_replace_all(remove_opt_prefix(long_opt), "-", "_")
+  stopifnot(is_valid_name(name))
 
   if (name %in% names(cmd$params)) {
     stop(paste(name, "is already defined."))
   }
 
-  if (is.flag) {
+  if (flag) {
     type <- "logical"
     default <- if (!is.null(default)) default else FALSE
   }
