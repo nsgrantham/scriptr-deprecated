@@ -4,12 +4,12 @@
 \alias{parse_args}
 \title{Parse command-line arguments using standard libc functions}
 \usage{
-parse_args(cmd, args)
+parse_args(scp, args)
 }
 \arguments{
-\item{cmd}{Command with description and list of params}
+\item{scp}{Script object}
 
-\item{args}{Command line arguments}
+\item{args}{Command line args}
 }
 \description{
 Parse command-line arguments using standard libc functions

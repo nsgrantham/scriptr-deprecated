@@ -1,10 +1,10 @@
 context("Option type scriptr::interval")
 
 pos_reals <- scriptr::interval(0, Inf, exclude_lower = TRUE)
-logify <- command("Perform a log transformation.") %>%
+logify <- script("Perform a log transformation.") %>%
   argument('x', nargs = 1, type = pos_reals) %>%
   option('--base', type = pos_reals, help = "Logarithmic base.") %>%
-  script(function(x, base) print(log(as.numeric(x)) / log(base)))
+  command(function(x, base) print(log(as.numeric(x)) / log(base)))
 
 test_that("Values outside of interval throw errors", {
   expect_error(logify(c(1, '--base', -2)))

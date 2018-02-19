@@ -2,13 +2,13 @@
 #' Check if string is valid long option name
 #' @param x String
 is_long_opt <- function(x) {
-  startsWith(x, "--")
+  startsWith(x, '--')
 }
 
 #' Check if string is valid short option name
 #' @param x String
 is_short_opt <- function(x) {
-  !is_long_opt(x) && startsWith(x, "-")
+  !is_long_opt(x) && startsWith(x, '-')
 }
 
 #' Check if string is valid variable name
@@ -50,7 +50,7 @@ remove_opt_prefix <- function(x) {
 #' Convert x to type
 #' @param x String
 #' @param type String of R type
-as.type <- function(x, type) {
+as_atomic_type <- function(x, type) {
   switch(type,
          character = as.character(x),
          logical = as.logical(x),
@@ -59,4 +59,28 @@ as.type <- function(x, type) {
          numeric = as.numeric(x),
          complex = as.complex(x),
          x)
+}
+
+#' Get default values of params
+#' @param scp Script object
+get_defaults <- function(scp) {
+  lapply(scp$params, function(x) x$default)
+}
+
+#' Get all argument params
+#' @param scp Script object
+get_arguments <- function(scp) {
+  Filter(function(x) class(x) == 'argument', scp$params)
+}
+
+#' Get all nargs value from arguments
+#' @param scp Script object
+get_nargs <- function(scp) {
+  lapply(get_arguments(scp), function(x) x$nargs)
+}
+
+#' Get all option params
+#' @param scp Script object
+get_options <- function(scp) {
+  Filter(function(x) class(x) == 'option', scp$params)
 }

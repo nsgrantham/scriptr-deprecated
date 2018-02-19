@@ -4,10 +4,10 @@
 \alias{option}
 \title{Option}
 \usage{
-option(cmd, ..., default = NULL, type = NULL, flag = FALSE, help = "")
+option(scp, ..., default = NULL, type = NULL, flag = FALSE, help = "")
 }
 \arguments{
-\item{cmd}{Command with description and list of params}
+\item{scp}{Script object}
 
 \item{...}{Long and short options}
 

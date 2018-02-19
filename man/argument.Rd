@@ -4,10 +4,10 @@
 \alias{argument}
 \title{Argument}
 \usage{
-argument(cmd, name, type = "character", nargs = 1, help = "")
+argument(scp, name, type = "character", nargs = 1, help = "")
 }
 \arguments{
-\item{cmd}{Command with description and list of params}
+\item{scp}{Script object}
 
 \item{name}{Name of argument}
 

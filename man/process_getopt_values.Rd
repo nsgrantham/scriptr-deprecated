@@ -4,10 +4,10 @@
 \alias{process_getopt_values}
 \title{Convert strings returned by getopt into appropriate R types}
 \usage{
-process_getopt_values(cmd, values)
+process_getopt_values(scp, values)
 }
 \arguments{
-\item{cmd}{Command list}
+\item{scp}{Script object}
 
 \item{values}{List of script values in strings}
 }

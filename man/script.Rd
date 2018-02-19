@@ -4,12 +4,10 @@
 \alias{script}
 \title{Script}
 \usage{
-script(cmd, fun)
+script(description)
 }
 \arguments{
-\item{cmd}{Command with description and list of params}
-
-\item{fun}{Function to execute with arguments supplied from the command line}
+\item{description}{What does the script do?}
 }
 \description{
 Script

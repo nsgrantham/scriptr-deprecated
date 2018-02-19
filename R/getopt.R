@@ -1,19 +1,18 @@
 #' Parse command-line arguments using standard libc functions
 #'
-#' @param cmd Command with description and list of params
-#' @param args Command line arguments
+#' @param scp Script object
+#' @param args Command line args
 #' @export
-parse_args <- function(cmd, args) {
-  getopt_params <- lapply(get_options(cmd), prepare_getopt_param)
+parse_args <- function(scp, args) {
+  getopt_params <- lapply(get_options(scp), prepare_getopt_param)
   # HACK: libc in getopt assumes first element of args vector is the command
   # call and skips it, so give it empty string to skip
-  getopt_args <- c("", args)
+  getopt_args <- c('', args)
   getopt_values <- callgetopt(args = getopt_args, opts = getopt_params)
-  if (!is.null(attr(getopt_values, "error"))) {
+  if (!is.null(attr(getopt_values, 'error'))) {
     stop("Error parsing command arguments")
   }
-  values <- process_getopt_values(cmd, getopt_values)
-  values
+  process_getopt_values(scp, getopt_values)
 }
 
 #' Translate a single parameter element to the format required for getopt
@@ -21,14 +20,14 @@ parse_args <- function(cmd, args) {
 #' @param param List containing parameter details
 #' @export
 prepare_getopt_param <- function(param) {
-  if (class(param) == "option") {
-    if ((class(param$type) == 'atomic') && (param$type$class == "logical")) {
-      opttype <- "flag"
+  if (class(param) == 'option') {
+    if ((class(param$type) == 'atomic') && (param$type$class == 'logical')) {
+      opttype <- 'flag'
     } else {
-      opttype <- "required"
+      opttype <- 'required'
     }
-    name <- ifelse(!is.null(param$long_opt), remove_opt_prefix(param$long_opt), "")
-    short <- ifelse(!is.null(param$short_opt), remove_opt_prefix(param$short_opt), "")
+    name <- ifelse(!is.null(param$long_opt), remove_opt_prefix(param$long_opt), '')
+    short <- ifelse(!is.null(param$short_opt), remove_opt_prefix(param$short_opt), '')
     getopt_param <- list(
       name = name,
       opttype = opttype,
@@ -40,10 +39,10 @@ prepare_getopt_param <- function(param) {
 
 #' Convert strings returned by getopt into appropriate R types
 #'
-#' @param cmd Command list
+#' @param scp Script object
 #' @param values List of script values in strings
-process_getopt_values <- function(cmd, values) {
-  opts <- get_options(cmd)
+process_getopt_values <- function(scp, values) {
+  opts <- get_options(scp)
   if (length(opts)) {
     for (value_name in names(values)) {
       val <- values[[value_name]]
@@ -52,13 +51,13 @@ process_getopt_values <- function(cmd, values) {
         if ((opt$type$class == 'logical') && (val == '')) {
           values[[value_name]] <- !opt$default
         } else {
-          values[[value_name]] <- as.type(val, opt$type$class)
+          values[[value_name]] <- as_atomic_type(val, opt$type$class)
         }
       } else if (class(opt$type) == 'interval') {
         stopifnot(is_valid_interval_value(opt, val))
         values[[value_name]] <- as.numeric(val)
       } else if (class(opt$type) == 'choice') {
-        val <- as.type(val, typeof(opt$type$choices))
+        val <- as_atomic_type(val, typeof(opt$type$choices))
         stopifnot(is_valid_choice_value(opt, val))
         values[[value_name]] <- val
       }
@@ -69,10 +68,10 @@ process_getopt_values <- function(cmd, values) {
   # At most one argument may allow for a variable number of args (nargs = Inf),
   # so cycle through the args forward (until Inf is encountered), then,
   # if necessary, backward to fully identify the begin/end of the Inf arg.
-  args <- get_arguments(cmd)
+  args <- get_arguments(scp)
   if (length(args)) {
-    args_given <- attr(values, "positional")
-    args_nargs <- unlist(get_nargs(cmd))
+    args_given <- attr(values, 'positional')
+    args_nargs <- unlist(get_nargs(scp))
     nargs_given <- length(args_given)
     if (Inf %in% args_nargs) {
       stopifnot(sum(args_nargs[args_nargs != Inf]) < nargs_given)
@@ -104,7 +103,7 @@ process_getopt_values <- function(cmd, values) {
           stopifnot(is_valid_interval_value(arg, val))
         }
       } else if (class(arg$type) == 'choice') {
-        arg_vals <- as.type(arg_vals, typeof(arg$type$choices))
+        arg_vals <- as_atomic_type(arg_vals, typeof(arg$type$choices))
         for (val in arg_vals) {
           stopifnot(is_valid_choice_value(arg, val))
         }
@@ -124,7 +123,7 @@ process_getopt_values <- function(cmd, values) {
 is_valid_choice_value <- function(param, value) {
   stopifnot(class(param$type) == 'choice')
   if (!(value %in% param$type$choices)) {
-    comma_delim_choices <- paste(param$type$choices, collapse = ", ")
+    comma_delim_choices <- paste(param$type$choices, collapse = ', ')
     stop(paste0(toTitleCase(class(param)), " ", param$name, " does not support value ",
                 value, ", choose from ", comma_delim_choices, "."))
   }

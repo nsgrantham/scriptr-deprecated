@@ -1,79 +1,59 @@
-context('Verify arguments are correctly parsed')
+context('Verify arguments are parsed correctly')
 
-greet_cmd <- command("Print a warm greeting.") %>%
-  option("--name", "-n", type = "character", help = "Name to be greeted.") %>%
-  option("--count", "-c", default = 1, help = "Number of times to greet.") %>%
-  option("--lang", "-l", default = "en", type = choice("en", "es", "se", "jp"),
-         help = "Language to greet in.") %>%
-  option("--yell", "-y", flag = TRUE, help = "Greet with enthusiasm!")
+greet_script <- script('Print a warm greeting.') %>%
+  option('--name', '-n', type = 'character', help = 'Name to be greeted.') %>%
+  option('--count', '-c', default = 1, help = 'Number of times to greet.') %>%
+  option('--lang', '-l', default = 'en', type = choice('en', 'es', 'se', 'jp'),
+         help = 'Language to greet in.') %>%
+  option('--yell', '-y', flag = TRUE, help = 'Greet with enthusiasm!')
 
-test_that('getopt parses valid arguments correctly for greeter example', {
-  # no args given
-  o0 <- parse_args(greet_cmd, c())
-  expect_equal(length(o0), 0)
-
-  # a single long argument
-  o1 <- parse_args(greet_cmd, c("--name=World"))
-  expect_equal(o1$name, 'World')
-
-  # a single short argument
-  o2 <- parse_args(greet_cmd, c("-n", "World"))
-  expect_equal(o2$name, 'World')
-
-  # long flag
-  o4l <- parse_args(greet_cmd, c("--yell"))
-  expect_true(o4l$yell, TRUE)
-
-  # short flag
-  o4s <- parse_args(greet_cmd, c("-y"))
-  expect_true(o4s$yell, TRUE)
-
-  # multiple long arguments
-  o5l <- parse_args(greet_cmd, c("--name=World", "--count=4"))
-  expect_equal(o5l$name, 'World')
-  expect_equal(o5l$count, 4)
-
-  # multiple short arguments
-  o5s <- parse_args(greet_cmd, c("-n", "World", "-c4"))
-  expect_equal(o5s$name, 'World')
-  expect_equal(o5s$count, 4)
-
-  # mixed length arguments
-  o5m <- parse_args(greet_cmd, c("-n", "World", "--count=4"))
-  expect_equal(o5m$name, 'World')
-  expect_equal(o5m$count, 4)
+test_that("Script with variety of options is parsed correctly by getopt", {
+  expect_equal(length(parse_args(greet_script, c())), 0)
+  expect_equal(parse_args(greet_script, c('--name=World'))$name, 'World')
+  expect_equal(parse_args(greet_script, c('-n', 'World'))$name, 'World')
+  expect_true(parse_args(greet_script, c('--yell'))$yell, TRUE)
+  expect_true(parse_args(greet_script, c('-y'))$yell, TRUE)
+  p1 <- parse_args(greet_script, c('--name=World', '--count=4'))
+  p2 <- parse_args(greet_script, c('-n', 'World', '-c4'))
+  p3 <- parse_args(greet_script, c('-n', 'World', '--count=4'))
+  expect_equal(p1$name, 'World')
+  expect_equal(p2$name, 'World')
+  expect_equal(p3$name, 'World')
+  expect_equal(p1$count, 4)
+  expect_equal(p2$count, 4)
+  expect_equal(p3$count, 4)
 })
 
-cmd <- command("Example #1 with multiple arguments.") %>%
-  argument("first", nargs = 3) %>%
-  argument("last")
+scp <- script("Example #1 with multiple arguments.") %>%
+  argument('first', nargs = 3) %>%
+  argument('last')
 
 test_that('getopt parses valid arguments correctly for example', {
-  o <- parse_args(cmd, c("One", "Two", "Three", "Four"))
+  o <- parse_args(scp, c("One", "Two", "Three", "Four"))
   expect_equal(o$first, c("One", "Two", "Three"))
   expect_equal(o$last, "Four")
 })
 
-cmd <- command("Example #1 with multiple arguments.") %>%
+scp <- script("Example #1 with multiple arguments.") %>%
   argument("first") %>%
   argument("middle", nargs = Inf) %>%
   argument("last")
 
 test_that('getopt parses valid arguments correctly for example', {
-  o <- parse_args(cmd, c("One", "Two", "Three", "Four"))
+  o <- parse_args(scp, c("One", "Two", "Three", "Four"))
   expect_equal(o$first, "One")
   expect_equal(o$middle, c("Two", "Three"))
   expect_equal(o$last, "Four")
 })
 
-cmd <- command("Example #2 with mixed arguments and options.") %>%
+scp <- script("Example #2 with mixed arguments and options.") %>%
   option("--myopt", "-m", type = "character", help = "A character option") %>%
   argument("first") %>%
   argument("middle", nargs = Inf) %>%
   argument("last")
 
 test_that('getopt parses valid arguments correctly for example', {
-  o <- parse_args(cmd, c("--myopt", "String", "One", "Two", "Three", "Four"))
+  o <- parse_args(scp, c("--myopt", "String", "One", "Two", "Three", "Four"))
   expect_equal(o$myopt, "String")
   expect_equal(o$first, "One")
   expect_equal(o$middle, c("Two", "Three"))

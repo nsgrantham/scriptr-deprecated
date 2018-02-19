@@ -2,13 +2,15 @@
 % Please edit documentation in R/scriptr.R
 \name{command}
 \alias{command}
-\title{Commands}
+\title{Command}
 \usage{
-command(description)
+command(scp, cmd)
 }
 \arguments{
-\item{description}{What does the script do?}
+\item{scp}{Script object}
+
+\item{cmd}{Command function}
 }
 \description{
-Commands
+Command
 }

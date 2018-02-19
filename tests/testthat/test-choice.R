@@ -1,11 +1,11 @@
 context("Option type scriptr::choice")
 
-mathop <- command("Perform simple algebra on two numbers.") %>%
+mathop <- script("Perform simple algebra on two numbers.") %>%
   argument('a') %>%
   argument('b') %>%
   option('--op', type = scriptr::choice(c('add', 'sub')),
          help = "Mathematical operation to perform.") %>%
-  script(function(a, b, op) {
+  command(function(a, b, op) {
     a <- as.numeric(a)
     b <- as.numeric(b)
     print(switch(op,
