@@ -8,7 +8,7 @@ script <- function(description) {
       description = description,
       params = list()
     ),
-    class = 'script'
+    class = "script"
   )
   scp
 }
@@ -21,8 +21,8 @@ script <- function(description) {
 #' @param type String of data type, scriptr::interval, or scriptr::choice
 #' @param help Description of argument for help page
 #' @export
-argument <- function(scp, name, type = 'character', nargs = 1, help = "") {
-  stopifnot(class(scp) == 'script')
+argument <- function(scp, name, type = "character", nargs = 1, help = "") {
+  stopifnot(class(scp) == "script")
   stopifnot(nargs == Inf || is_integer(nargs))
   stopifnot(nargs > 0)
   if (sum(c(nargs, unlist(get_nargs(scp))) == Inf) > 1) {
@@ -34,7 +34,7 @@ argument <- function(scp, name, type = 'character', nargs = 1, help = "") {
       type = type,
       help = help
     ),
-    class = 'argument'
+    class = "argument"
   )
   scp
 }
@@ -50,7 +50,7 @@ argument <- function(scp, name, type = 'character', nargs = 1, help = "") {
 #' @importFrom stringr str_replace_all
 #' @export
 option <- function(scp, ..., default = NULL, type = NULL, flag = FALSE, help = "") {
-  stopifnot(class(scp) == 'script')
+  stopifnot(class(scp) == "script")
   opts <- list(...)
   long_opt <- NULL
   short_opt <- NULL
@@ -64,7 +64,7 @@ option <- function(scp, ..., default = NULL, type = NULL, flag = FALSE, help = "
   if (is.null(long_opt)) {
     stop("Long option (a hyphen-separated name with prefix '--') is required.")
   }
-  name <- str_replace_all(remove_opt_prefix(long_opt), '-', '_')
+  name <- str_replace_all(remove_opt_prefix(long_opt), "-", "_")
   stopifnot(is_valid_name(name))
 
   if (name %in% names(scp$params)) {
@@ -72,7 +72,7 @@ option <- function(scp, ..., default = NULL, type = NULL, flag = FALSE, help = "
   }
 
   if (flag) {
-    type <- 'logical'
+    type <- "logical"
     default <- if (!is.null(default)) default else FALSE
   }
   if (is.null(type)) {
@@ -82,7 +82,7 @@ option <- function(scp, ..., default = NULL, type = NULL, flag = FALSE, help = "
       stop(paste("Type declaration required for", name, "since no default is given."))
     }
   }
-  if (!(class(type) %in% c('choice', 'interval')) &&
+  if (!(class(type) %in% c("choice", "interval")) &&
       (type %in% ATOMIC_DATA_TYPES)) {
     type <- atomic(type)
   }
@@ -96,7 +96,7 @@ option <- function(scp, ..., default = NULL, type = NULL, flag = FALSE, help = "
       default = default,
       help = help
     ),
-    class = 'option'
+    class = "option"
   )
   scp
 }
@@ -107,8 +107,8 @@ option <- function(scp, ..., default = NULL, type = NULL, flag = FALSE, help = "
 #' @param cmd Command function
 #' @export
 command <- function(scp, cmd) {
-  stopifnot(class(scp) == 'script')
-  stopifnot(class(cmd) == 'function')
+  stopifnot(class(scp) == "script")
+  stopifnot(class(cmd) == "function")
   # If scp is passed to script via method chaining with `%>%`, the function
   # returned by command is unable to access scp when it is called, so save
   # scp to the current environment. (Strange... Am I missing something?)
@@ -118,7 +118,7 @@ command <- function(scp, cmd) {
     if (!length(args)) {
       args <- commandArgs(trailingOnly = TRUE)
     }
-    if ('--help' %in% args || identical(args, character(0))) {
+    if ("--help" %in% args || identical(args, character(0))) {
       cat(build_help_page(scp))
       return(invisible())
     }

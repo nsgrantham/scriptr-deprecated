@@ -2,13 +2,13 @@
 #' Check if string is valid long option name
 #' @param x String
 is_long_opt <- function(x) {
-  startsWith(x, '--')
+  startsWith(x, "--")
 }
 
 #' Check if string is valid short option name
 #' @param x String
 is_short_opt <- function(x) {
-  !is_long_opt(x) && startsWith(x, '-')
+  !is_long_opt(x) && startsWith(x, "-")
 }
 
 #' Check if string is valid variable name
@@ -70,7 +70,7 @@ get_defaults <- function(scp) {
 #' Get all argument params
 #' @param scp Script object
 get_arguments <- function(scp) {
-  Filter(function(x) class(x) == 'argument', scp$params)
+  Filter(function(x) class(x) == "argument", scp$params)
 }
 
 #' Get all nargs value from arguments
@@ -82,5 +82,5 @@ get_nargs <- function(scp) {
 #' Get all option params
 #' @param scp Script object
 get_options <- function(scp) {
-  Filter(function(x) class(x) == 'option', scp$params)
+  Filter(function(x) class(x) == "option", scp$params)
 }
