@@ -1,22 +1,25 @@
 library(scriptr)
 
-greet <- command("Print a warm greeting.") %>%
-  option("--name", type = "character",  help = "Name to be greeted.") %>%
+greet <- script("Print a warm greeting.") %>%
+  argument("name", help = "Name to be greeted.") %>%
   option("--count", "-c", default = 1, help = "Number of times to greet.") %>%
   option("--lang", "-l", default = "en",
-         type = scriptr::choice(c("en", "es", "se", "ja", "rs")),
+         type = choice(c("ch", "de", "en", "es", "fr", "ja", "ru", "se")),
          help = "Language to greet in.") %>%
   option("--yell", "-y", flag = TRUE, help = "Greet with enthusiasm!") %>%
-  script(function(name, count, lang, yell) {
+  command(function(name, count, lang, yell) {
     hello <- list(
+      ch = "你好",
+      de = "Hallo",
       en = "Hello",
       es = "Hola",
-      se = "Hallå",
+      fr = "Bonjour",
       ja = "こんにちは",
-      rs = "Приве́т"
+      ru = "Привет",
+      se = "Hallå"
     )
-    begin <- ifelse(yell && lang == "es", "¡", "")
-    end <- ifelse(yell, "!", "")
+    begin <- if (yell && lang == "es") "¡" else ""
+    end <- if (yell) "!" else ""
     greeting <- paste(hello[[lang]], name)
     greeting <- paste0(begin, greeting, end)
     print(rep(greeting, count))

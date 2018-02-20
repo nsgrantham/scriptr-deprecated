@@ -1,3 +1,12 @@
+#' scriptr - parse command line arguments from the shell
+#'
+#' @name scriptr
+#' @docType package
+#'
+#' @useDynLib scriptr
+#' @importFrom Rcpp sourceCpp
+NULL
+
 #' Script
 #'
 #' @param description What does the script do?
@@ -95,7 +104,7 @@ option <- function(scp, ..., default = NULL, type = NULL, flag = FALSE, help = "
 
   scp$params[[name]] <- structure(
     list(
-      name = long_opt,
+      name = name,
       long_opt = long_opt,
       short_opt = short_opt,
       type = type,

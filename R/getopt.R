@@ -26,8 +26,8 @@ prepare_getopt_param <- function(param) {
     } else {
       opttype <- "required"
     }
-    name <- ifelse(!is.null(param$long_opt), remove_opt_prefix(param$long_opt), "")
-    short <- ifelse(!is.null(param$short_opt), remove_opt_prefix(param$short_opt), "")
+    name <- if (!is.null(param$long_opt)) remove_opt_prefix(param$long_opt) else ""
+    short <- if (!is.null(param$short_opt)) remove_opt_prefix(param$short_opt) else ""
     getopt_param <- list(
       name = name,
       opttype = opttype,

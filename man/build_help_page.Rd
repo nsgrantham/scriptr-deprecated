@@ -4,10 +4,10 @@
 \alias{build_help_page}
 \title{Help page}
 \usage{
-build_help_page(cmd)
+build_help_page(scp)
 }
 \arguments{
-\item{cmd}{Command with description and list of params}
+\item{scp}{Script object}
 }
 \description{
 Help page

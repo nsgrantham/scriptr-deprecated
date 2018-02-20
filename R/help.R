@@ -1,12 +1,12 @@
 #' Help page
-#' @param cmd Command with description and list of params
-build_help_page <- function(cmd) {
+#' @param scp Script object
+build_help_page <- function(scp) {
   # Build more advanced help page later
-  help_page <- paste0(cmd$description, "\n\n")
+  help_page <- paste0(scp$description, "\n\n")
   help_page <- paste0(help_page, "Options:\n")
-  cmd <- option(cmd, "--help", "-h", is.flag = TRUE,
+  scp <- option(scp, "--help", flag = TRUE,
                 help = "Show this message and exit.")
-  opts <- get_options(cmd)
+  opts <- get_options(scp)
   texts <- list()
   for (opt_name in names(opts)) {
     texts[[opt_name]] <- build_option_text(opts[[opt_name]])
