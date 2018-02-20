@@ -4,7 +4,7 @@
 \alias{argument}
 \title{Argument}
 \usage{
-argument(scp, name, type = "character", nargs = 1, help = "")
+argument(scp, name, type = NULL, nargs = 1, help = "")
 }
 \arguments{
 \item{scp}{Script object}

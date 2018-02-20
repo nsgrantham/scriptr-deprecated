@@ -21,12 +21,18 @@ script <- function(description) {
 #' @param type String of data type, scriptr::interval, or scriptr::choice
 #' @param help Description of argument for help page
 #' @export
-argument <- function(scp, name, type = "character", nargs = 1, help = "") {
+argument <- function(scp, name, type = NULL, nargs = 1, help = "") {
   stopifnot(class(scp) == "script")
   stopifnot(nargs == Inf || is_integer(nargs))
   stopifnot(nargs > 0)
   if (sum(c(nargs, unlist(get_nargs(scp))) == Inf) > 1) {
     stop("Only one argument with nargs = Inf is allowed.")
+  }
+  if (is.null(type)) {
+    type <- "character"
+  }
+  if (!(class(type) %in% c("choice", "interval")) && (type %in% ATOMIC_DATA_TYPES)) {
+    type <- atomic(type)
   }
   scp$params[[name]] <- structure(
     list(

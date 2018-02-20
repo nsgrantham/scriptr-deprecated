@@ -21,8 +21,7 @@ parse_args <- function(scp, args) {
 #' @export
 prepare_getopt_param <- function(param) {
   if (class(param) == "option") {
-    if ((class(param$type) == "atomic") &&
-        (param$type$class == "logical")) {
+    if ((class(param$type) == "atomic") && (param$type$class == "logical")) {
       opttype <- "flag"
     } else {
       opttype <- "required"
@@ -48,27 +47,9 @@ process_getopt_values <- function(scp, values) {
     for (value_name in names(values)) {
       val <- values[[value_name]]
       opt <- opts[[value_name]]
-      if (class(opt$type) == "atomic") {
-        if ((opt$type$class == "logical") && (val == "")) {
-          values[[value_name]] <- !opt$default
-        } else {
-          values[[value_name]] <- as_atomic_type(val, opt$type$class)
-        }
-      } else if (class(opt$type) == "interval") {
-        stopifnot(is_valid_interval_value(opt, val))
-        values[[value_name]] <- as.numeric(val)
-      } else if (class(opt$type) == "choice") {
-        val <- as_atomic_type(val, typeof(opt$type$choices))
-        stopifnot(is_valid_choice_value(opt, val))
-        values[[value_name]] <- val
-      }
+      values[[value_name]] <- parse_parameter_type(opt, val)
     }
   }
-
-  # Match the positional args given with those defined in command.
-  # At most one argument may allow for a variable number of args (nargs = Inf),
-  # so cycle through the args forward (until Inf is encountered), then,
-  # if necessary, backward to fully identify the begin/end of the Inf arg.
   args <- get_arguments(scp)
   if (length(args)) {
     args_given <- attr(values, "positional")
@@ -79,41 +60,65 @@ process_getopt_values <- function(scp, values) {
     } else {
       stopifnot(sum(args_nargs) == nargs_given)
     }
-    arg_begin <- 1
-    for (arg_name in names(args)) {  # forward
-      args[[arg_name]]$begin <- arg_begin
-      if (args[[arg_name]]$nargs == Inf) break
-      args[[arg_name]]$end <- arg_begin + args[[arg_name]]$nargs - 1
-      arg_begin <- args[[arg_name]]$end + 1
-    }
-    if (arg_begin <= nargs_given) {
-      arg_end <- nargs_given
-      for (arg_name in rev(names(args))) {  # backward
-        args[[arg_name]]$end <- arg_end
-        if (args[[arg_name]]$nargs == Inf) break
-        args[[arg_name]]$begin <- arg_end - args[[arg_name]]$nargs + 1
-        arg_end <- args[[arg_name]]$begin - 1
-      }
-    }
+    args <- match_positionals_with_arguments(args, nargs_given)
     for (arg_name in names(args)) {
       arg <- args[[arg_name]]
       arg_vals <- args_given[arg$begin:arg$end]
-      if (class(arg$type) == "interval") {
-        arg_vals <- as.numeric(arg_vals)
-        for (val in arg_vals) {
-          stopifnot(is_valid_interval_value(arg, val))
-        }
-      } else if (class(arg$type) == "choice") {
-        arg_vals <- as_atomic_type(arg_vals, typeof(arg$type$choices))
-        for (val in arg_vals) {
-          stopifnot(is_valid_choice_value(arg, val))
-        }
+      vals <- NULL
+      for (arg_val in arg_vals) {
+        vals <- c(vals, parse_parameter_type(arg, arg_val))
       }
-      values[[arg_name]] <- arg_vals
+      values[[arg_name]] <- vals
     }
   }
-
   values
+}
+
+#' Match the positional args given with those defined in command.
+#' At most one argument may allow for a variable number of args (nargs = Inf),
+#' so cycle through the args forward (until Inf is encountered), then,
+#' if necessary, backward to fully identify the begin/end of the Inf arg.
+#' @param args Arguments
+#' @param total_nargs Total number of arguments provided by the user
+match_positionals_with_arguments <- function(args, total_nargs) {
+  arg_begin <- 1
+  for (arg_name in names(args)) {  # forward
+    args[[arg_name]]$begin <- arg_begin
+    if (args[[arg_name]]$nargs == Inf) break
+    args[[arg_name]]$end <- arg_begin + args[[arg_name]]$nargs - 1
+    arg_begin <- args[[arg_name]]$end + 1
+  }
+  if (arg_begin <= total_nargs) {
+    arg_end <- total_nargs
+    for (arg_name in rev(names(args))) {  # backward
+      args[[arg_name]]$end <- arg_end
+      if (args[[arg_name]]$nargs == Inf) break
+      args[[arg_name]]$begin <- arg_end - args[[arg_name]]$nargs + 1
+      arg_end <- args[[arg_name]]$begin - 1
+    }
+  }
+  args
+}
+
+#' Parse parameter type
+#'
+#' @param param Script parameter
+#' @param value Value of parameter
+parse_parameter_type <- function(param, value) {
+  if (class(param$type) == "atomic") {
+    if ((param$type$class == "logical") && (value == "")) {
+      value <- !param$default
+    } else {
+      value <- as_atomic_type(value, param$type$class)
+    }
+  } else if (class(param$type) == "interval") {
+    stopifnot(is_valid_interval_value(param, value))
+    value <- as.numeric(value)
+  } else if (class(param$type) == "choice") {
+    value <- as_atomic_type(value, typeof(param$type$choices))
+    stopifnot(is_valid_choice_value(param, value))
+  }
+  value
 }
 
 #' Check validity of choice value

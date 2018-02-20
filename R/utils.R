@@ -51,14 +51,20 @@ remove_opt_prefix <- function(x) {
 #' @param x String
 #' @param type String of R type
 as_atomic_type <- function(x, type) {
-  switch(type,
+  tryCatch(
+    switch(type,
          character = as.character(x),
          logical = as.logical(x),
          integer = as.integer(x),
          double = as.double(x),
          numeric = as.numeric(x),
          complex = as.complex(x),
-         x)
+         x),
+    warning = function(w) {
+      stop(paste("Unable to convert value", x, "to", type, "type."))
+    },
+    finally = NULL
+    )
 }
 
 #' Get default values of params
